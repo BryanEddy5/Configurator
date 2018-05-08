@@ -21349,69 +21349,12 @@
               <CodeElement>
                 <CommentLines />
                 <Properties>
-                  <Name>dblJacketPercentage</Name>
-                  <FullName>PremiseConfigurator.BOM.dblJacketPercentage</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Field</Kind>
-                  <Declaration>Dim dblJacketPercentage As Double</Declaration>
-                  <Access>Private</Access>
-                  <TypeFullName>Double</TypeFullName>
-                  <TypeName>Double</TypeName>
-                  <TypeAliasedName>Double</TypeAliasedName>
-                  <InitExpression />
-                  <IsConstant>False</IsConstant>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                </Properties>
-              </CodeElement>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
-                  <Name>dblAdditivePercentage</Name>
-                  <FullName>PremiseConfigurator.BOM.dblAdditivePercentage</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Field</Kind>
-                  <Declaration>Dim dblAdditivePercentage As Double</Declaration>
-                  <Access>Private</Access>
-                  <TypeFullName>Double</TypeFullName>
-                  <TypeName>Double</TypeName>
-                  <TypeAliasedName>Double</TypeAliasedName>
-                  <InitExpression />
-                  <IsConstant>False</IsConstant>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                </Properties>
-              </CodeElement>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
                   <Name>dblColorPercentage</Name>
                   <FullName>PremiseConfigurator.BOM.dblColorPercentage</FullName>
                   <DocComment />
                   <XmlDocComment />
                   <Kind>Field</Kind>
                   <Declaration>Dim dblColorPercentage As Double</Declaration>
-                  <Access>Private</Access>
-                  <TypeFullName>Double</TypeFullName>
-                  <TypeName>Double</TypeName>
-                  <TypeAliasedName>Double</TypeAliasedName>
-                  <InitExpression />
-                  <IsConstant>False</IsConstant>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                </Properties>
-              </CodeElement>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
-                  <Name>dblColorChipSpecificGravity</Name>
-                  <FullName>PremiseConfigurator.BOM.dblColorChipSpecificGravity</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Field</Kind>
-                  <Declaration>Dim dblColorChipSpecificGravity As Double</Declaration>
                   <Access>Private</Access>
                   <TypeFullName>Double</TypeFullName>
                   <TypeName>Double</TypeName>
@@ -21444,25 +21387,6 @@
               <CodeElement>
                 <CommentLines />
                 <Properties>
-                  <Name>strAdditive</Name>
-                  <FullName>PremiseConfigurator.BOM.strAdditive</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Field</Kind>
-                  <Declaration>Dim strAdditive As String</Declaration>
-                  <Access>Private</Access>
-                  <TypeFullName>String</TypeFullName>
-                  <TypeName>String</TypeName>
-                  <TypeAliasedName>String</TypeAliasedName>
-                  <InitExpression />
-                  <IsConstant>False</IsConstant>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                </Properties>
-              </CodeElement>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
                   <Name>strDesignCode</Name>
                   <FullName>PremiseConfigurator.BOM.strDesignCode</FullName>
                   <DocComment />
@@ -21473,44 +21397,6 @@
                   <TypeFullName>String</TypeFullName>
                   <TypeName>String</TypeName>
                   <TypeAliasedName>String</TypeAliasedName>
-                  <InitExpression />
-                  <IsConstant>False</IsConstant>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                </Properties>
-              </CodeElement>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
-                  <Name>strAdditive2</Name>
-                  <FullName>PremiseConfigurator.BOM.strAdditive2</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Field</Kind>
-                  <Declaration>Dim strAdditive2 As String</Declaration>
-                  <Access>Private</Access>
-                  <TypeFullName>String</TypeFullName>
-                  <TypeName>String</TypeName>
-                  <TypeAliasedName>String</TypeAliasedName>
-                  <InitExpression />
-                  <IsConstant>False</IsConstant>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                </Properties>
-              </CodeElement>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
-                  <Name>dblAdditivePercentage2</Name>
-                  <FullName>PremiseConfigurator.BOM.dblAdditivePercentage2</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Field</Kind>
-                  <Declaration>Dim dblAdditivePercentage2 As Double</Declaration>
-                  <Access>Private</Access>
-                  <TypeFullName>Double</TypeFullName>
-                  <TypeName>Double</TypeName>
-                  <TypeAliasedName>Double</TypeAliasedName>
                   <InitExpression />
                   <IsConstant>False</IsConstant>
                   <IsStatic>False</IsStatic>
@@ -22958,46 +22844,6 @@
                       <XmlDocComment />
                       <Kind>Parameter</Kind>
                       <Declaration>Mask As String</Declaration>
-                      <Access />
-                      <TypeFullName>String</TypeFullName>
-                      <TypeName>String</TypeName>
-                      <TypeAliasedName>String</TypeAliasedName>
-                      <Modifiers />
-                    </Properties>
-                  </Parameter>
-                </Parameters>
-              </CodeElement>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
-                  <Name>RenameImageFiber</Name>
-                  <FullName>PremiseConfigurator.CommonFunctions.RenameImageFiber</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Method</Kind>
-                  <Declaration>Private Function RenameImageFiber(FileName As String) As String</Declaration>
-                  <Access>Private</Access>
-                  <TypeFullName>String</TypeFullName>
-                  <TypeName>String</TypeName>
-                  <TypeAliasedName>String</TypeAliasedName>
-                  <MethodKind>Function</MethodKind>
-                  <IsOverloaded>False</IsOverloaded>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                  <IsOverridable>False</IsOverridable>
-                  <IsAbstract>False</IsAbstract>
-                  <IsOverrides>False</IsOverrides>
-                  <IsNotOverridable>False</IsNotOverridable>
-                </Properties>
-                <Parameters>
-                  <Parameter>
-                    <Properties>
-                      <Name>FileName</Name>
-                      <FullName>PremiseConfigurator.CommonFunctions.RenameImageFiber.FileName</FullName>
-                      <DocComment />
-                      <XmlDocComment />
-                      <Kind>Parameter</Kind>
-                      <Declaration>FileName As String</Declaration>
                       <Access />
                       <TypeFullName>String</TypeFullName>
                       <TypeName>String</TypeName>
@@ -30525,52 +30371,6 @@
       </File>
       <File>
         <Properties>
-          <FileName>RenameObjects</FileName>
-          <FullPath />
-          <SubType>Module</SubType>
-        </Properties>
-        <CodeElements>
-          <CodeElement>
-            <CommentLines />
-            <Properties>
-              <Name>RenameObjects</Name>
-              <FullName>PremiseConfigurator.RenameObjects</FullName>
-              <DocComment />
-              <XmlDocComment />
-              <Kind>Module</Kind>
-              <Declaration />
-              <Access>Public</Access>
-              <IsShadows>False</IsShadows>
-              <Namespace>PremiseConfigurator</Namespace>
-            </Properties>
-            <CodeElements>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
-                  <Name>cmdChangeObjName_Click</Name>
-                  <FullName>PremiseConfigurator.RenameObjects.cmdChangeObjName_Click</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Method</Kind>
-                  <Declaration>Private Sub cmdChangeObjName_Click()</Declaration>
-                  <Access>Private</Access>
-                  <MethodKind>Sub</MethodKind>
-                  <IsOverloaded>False</IsOverloaded>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                  <IsOverridable>False</IsOverridable>
-                  <IsAbstract>False</IsAbstract>
-                  <IsOverrides>False</IsOverrides>
-                  <IsNotOverridable>False</IsNotOverridable>
-                </Properties>
-                <Parameters />
-              </CodeElement>
-            </CodeElements>
-          </CodeElement>
-        </CodeElements>
-      </File>
-      <File>
-        <Properties>
           <FileName>SalesForce</FileName>
           <FullPath />
           <SubType>Module</SubType>
@@ -30893,73 +30693,16 @@
               <CodeElement>
                 <CommentLines />
                 <Properties>
-                  <Name>TBColorID</Name>
-                  <FullName>PremiseConfigurator.Subunit_X_Loop.TBColorID</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Field</Kind>
-                  <Declaration>Dim TBColorID As String</Declaration>
-                  <Access>Private</Access>
-                  <TypeFullName>String</TypeFullName>
-                  <TypeName>String</TypeName>
-                  <TypeAliasedName>String</TypeAliasedName>
-                  <InitExpression />
-                  <IsConstant>False</IsConstant>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                </Properties>
-              </CodeElement>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
                   <Name>SubColorID</Name>
                   <FullName>PremiseConfigurator.Subunit_X_Loop.SubColorID</FullName>
                   <DocComment />
                   <XmlDocComment />
                   <Kind>Field</Kind>
-                  <Declaration>SubColorID As String</Declaration>
+                  <Declaration>Dim SubColorID As String</Declaration>
                   <Access>Private</Access>
                   <TypeFullName>String</TypeFullName>
                   <TypeName>String</TypeName>
                   <TypeAliasedName>String</TypeAliasedName>
-                  <InitExpression />
-                  <IsConstant>False</IsConstant>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                </Properties>
-              </CodeElement>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
-                  <Name>NumberOfPositions</Name>
-                  <FullName>PremiseConfigurator.Subunit_X_Loop.NumberOfPositions</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Field</Kind>
-                  <Declaration>Dim NumberOfPositions As Integer</Declaration>
-                  <Access>Private</Access>
-                  <TypeFullName>Integer</TypeFullName>
-                  <TypeName>Integer</TypeName>
-                  <TypeAliasedName>Integer</TypeAliasedName>
-                  <InitExpression />
-                  <IsConstant>False</IsConstant>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                </Properties>
-              </CodeElement>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
-                  <Name>i</Name>
-                  <FullName>PremiseConfigurator.Subunit_X_Loop.i</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Field</Kind>
-                  <Declaration>Dim i As Integer</Declaration>
-                  <Access>Private</Access>
-                  <TypeFullName>Integer</TypeFullName>
-                  <TypeName>Integer</TypeName>
-                  <TypeAliasedName>Integer</TypeAliasedName>
                   <InitExpression />
                   <IsConstant>False</IsConstant>
                   <IsStatic>False</IsStatic>
@@ -34306,25 +34049,6 @@ Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, _</TypeAliasedNam
                   <TypeFullName>clsApplicationDirectory</TypeFullName>
                   <TypeName>clsApplicationDirectory</TypeName>
                   <TypeAliasedName>clsApplicationDirectory</TypeAliasedName>
-                  <InitExpression />
-                  <IsConstant>False</IsConstant>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                </Properties>
-              </CodeElement>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
-                  <Name>User</Name>
-                  <FullName>PremiseConfigurator.VersionCheck.User</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Field</Kind>
-                  <Declaration>User As New clsUser</Declaration>
-                  <Access>Private</Access>
-                  <TypeFullName>clsUser</TypeFullName>
-                  <TypeName>clsUser</TypeName>
-                  <TypeAliasedName>clsUser</TypeAliasedName>
                   <InitExpression />
                   <IsConstant>False</IsConstant>
                   <IsStatic>False</IsStatic>
@@ -39308,27 +39032,6 @@ Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, _</TypeAliasedNam
               <CodeElement>
                 <CommentLines />
                 <Properties>
-                  <Name>LabelErrCheck</Name>
-                  <FullName>PremiseConfigurator.Form_frmCreateConstruction.LabelErrCheck</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Method</Kind>
-                  <Declaration>Private Sub LabelErrCheck()</Declaration>
-                  <Access>Private</Access>
-                  <MethodKind>Sub</MethodKind>
-                  <IsOverloaded>False</IsOverloaded>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                  <IsOverridable>False</IsOverridable>
-                  <IsAbstract>False</IsAbstract>
-                  <IsOverrides>False</IsOverrides>
-                  <IsNotOverridable>False</IsNotOverridable>
-                </Properties>
-                <Parameters />
-              </CodeElement>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
                   <Name>btnSave_Click</Name>
                   <FullName>PremiseConfigurator.Form_frmCreateConstruction.btnSave_Click</FullName>
                   <DocComment />
@@ -39964,6 +39667,226 @@ Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, _</TypeAliasedNam
               <Kind>Class</Kind>
               <Declaration />
               <Access>Public</Access>
+              <accChildCount>154</accChildCount>
+              <FormName>frmCreateItem</FormName>
+              <RecordSource />
+              <Filter />
+              <FilterOn>False</FilterOn>
+              <OrderBy />
+              <OrderByOn>False</OrderByOn>
+              <AllowFilters>True</AllowFilters>
+              <Caption>Create New Item</Caption>
+              <DefaultView>0</DefaultView>
+              <ViewsAllowed>0</ViewsAllowed>
+              <AllowEditing>True</AllowEditing>
+              <DefaultEditing>2</DefaultEditing>
+              <AllowEdits>True</AllowEdits>
+              <AllowDeletions>True</AllowDeletions>
+              <AllowAdditions>True</AllowAdditions>
+              <DataEntry>False</DataEntry>
+              <AllowUpdating>0</AllowUpdating>
+              <RecordsetType>0</RecordsetType>
+              <RecordLocks>0</RecordLocks>
+              <ScrollBars>3</ScrollBars>
+              <RecordSelectors>False</RecordSelectors>
+              <NavigationButtons>False</NavigationButtons>
+              <DividingLines>True</DividingLines>
+              <AutoResize>True</AutoResize>
+              <AutoCenter>True</AutoCenter>
+              <PopUp>False</PopUp>
+              <Modal>False</Modal>
+              <BorderStyle>2</BorderStyle>
+              <ControlBox>True</ControlBox>
+              <MinButton>False</MinButton>
+              <MaxButton>True</MaxButton>
+              <MinMaxButtons>2</MinMaxButtons>
+              <CloseButton>False</CloseButton>
+              <WhatsThisButton>False</WhatsThisButton>
+              <Width>24375</Width>
+              <PictureType>0</PictureType>
+              <PictureSizeMode>0</PictureSizeMode>
+              <PictureAlignment>2</PictureAlignment>
+              <PictureTiling>False</PictureTiling>
+              <Cycle>0</Cycle>
+              <MenuBar />
+              <Toolbar />
+              <ShortcutMenu>True</ShortcutMenu>
+              <ShortcutMenuBar />
+              <GridX>24</GridX>
+              <GridY>24</GridY>
+              <LayoutForPrint>False</LayoutForPrint>
+              <FastLaserPrinting>True</FastLaserPrinting>
+              <HelpFile />
+              <HelpContextId>0</HelpContextId>
+              <RowHeight>-1</RowHeight>
+              <DatasheetFontName>Arial</DatasheetFontName>
+              <DatasheetFontHeight>10</DatasheetFontHeight>
+              <DatasheetFontWeight>400</DatasheetFontWeight>
+              <DatasheetFontItalic>False</DatasheetFontItalic>
+              <DatasheetFontUnderline>False</DatasheetFontUnderline>
+              <TabularCharSet>0</TabularCharSet>
+              <DatasheetGridlinesBehavior>3</DatasheetGridlinesBehavior>
+              <DatasheetGridlinesColor>12632256</DatasheetGridlinesColor>
+              <DatasheetCellsEffect>0</DatasheetCellsEffect>
+              <DatasheetForeColor>0</DatasheetForeColor>
+              <ShowGrid>True</ShowGrid>
+              <DatasheetBackColor>16777215</DatasheetBackColor>
+              <Hwnd>1251782</Hwnd>
+              <Count>152</Count>
+              <LogicalPageWidth>9360</LogicalPageWidth>
+              <Visible>True</Visible>
+              <Painting>True</Painting>
+              <FrozenColumns>1</FrozenColumns>
+              <TabularFamily>22</TabularFamily>
+              <_Name>frmCreateItem</_Name>
+              <PaletteSource>(Default)</PaletteSource>
+              <Tag />
+              <PaintPalette />
+              <OnMenu />
+              <OpenArgs />
+              <ConnectSynch>0</ConnectSynch>
+              <OnCurrent />
+              <OnInsert />
+              <BeforeInsert />
+              <AfterInsert />
+              <BeforeUpdate />
+              <AfterUpdate />
+              <OnDirty />
+              <OnDelete />
+              <BeforeDelConfirm />
+              <AfterDelConfirm />
+              <OnOpen />
+              <OnLoad>[Event Procedure]</OnLoad>
+              <OnResize />
+              <OnUnload />
+              <OnClose />
+              <OnActivate />
+              <OnDeactivate />
+              <OnGotFocus />
+              <OnLostFocus />
+              <OnClick />
+              <OnDblClick />
+              <OnMouseDown />
+              <OnMouseMove />
+              <OnMouseUp />
+              <OnKeyDown />
+              <OnKeyUp />
+              <OnKeyPress />
+              <KeyPreview>False</KeyPreview>
+              <OnError />
+              <OnFilter />
+              <OnApplyFilter />
+              <OnTimer>[Event Procedure]</OnTimer>
+              <TimerInterval>0</TimerInterval>
+              <WindowWidth>21450</WindowWidth>
+              <WindowHeight>12885</WindowHeight>
+              <CurrentView>0</CurrentView>
+              <PictureData />
+              <InsideHeight>11985</InsideHeight>
+              <InsideWidth>20895</InsideWidth>
+              <PicturePalette />
+              <HasModule>True</HasModule>
+              <Orientation>0</Orientation>
+              <AllowDesignChanges>True</AllowDesignChanges>
+              <SubdatasheetHeight>0</SubdatasheetHeight>
+              <SubdatasheetExpanded>False</SubdatasheetExpanded>
+              <DatasheetBorderLineStyle>1</DatasheetBorderLineStyle>
+              <DatasheetColumnHeaderUnderlineStyle>1</DatasheetColumnHeaderUnderlineStyle>
+              <HorizontalDatasheetGridlineStyle>1</HorizontalDatasheetGridlineStyle>
+              <VerticalDatasheetGridlineStyle>1</VerticalDatasheetGridlineStyle>
+              <WindowTop>480</WindowTop>
+              <WindowLeft>1650</WindowLeft>
+              <OnUndo />
+              <Moveable>True</Moveable>
+              <AllowFormView>True</AllowFormView>
+              <AllowDatasheetView>True</AllowDatasheetView>
+              <AllowPivotTableView>False</AllowPivotTableView>
+              <AllowPivotChartView>False</AllowPivotChartView>
+              <OnConnect />
+              <OnDisconnect />
+              <PivotTableChange />
+              <Query />
+              <BeforeQuery />
+              <SelectionChange />
+              <CommandBeforeExecute />
+              <CommandChecked />
+              <CommandEnabled />
+              <CommandExecute />
+              <DataSetChange />
+              <BeforeScreenTip />
+              <AfterFinalRender />
+              <AfterRender />
+              <AfterLayout />
+              <BeforeRender />
+              <MouseWheel />
+              <ViewChange />
+              <DataChange />
+              <FetchDefaults>True</FetchDefaults>
+              <UseDefaultPrinter>True</UseDefaultPrinter>
+              <FilterOnLoad>False</FilterOnLoad>
+              <OrderByOnLoad>True</OrderByOnLoad>
+              <SplitFormOrientation>0</SplitFormOrientation>
+              <SplitFormDatasheet>0</SplitFormDatasheet>
+              <SplitFormSplitterBar>True</SplitFormSplitterBar>
+              <SplitFormPrinting>0</SplitFormPrinting>
+              <SplitFormSplitterBarSave>True</SplitFormSplitterBarSave>
+              <NavigationCaption />
+              <OnCurrentMacro />
+              <BeforeInsertMacro />
+              <AfterInsertMacro />
+              <BeforeUpdateMacro />
+              <AfterUpdateMacro />
+              <OnDirtyMacro />
+              <OnDeleteMacro />
+              <BeforeDelConfirmMacro />
+              <AfterDelConfirmMacro />
+              <OnOpenMacro />
+              <OnLoadMacro />
+              <OnResizeMacro />
+              <OnUnloadMacro />
+              <OnCloseMacro />
+              <OnActivateMacro />
+              <OnDeactivateMacro />
+              <OnGotFocusMacro />
+              <OnLostFocusMacro />
+              <OnClickMacro />
+              <OnDblClickMacro />
+              <OnMouseDownMacro />
+              <OnMouseMoveMacro />
+              <OnMouseUpMacro />
+              <OnKeyDownMacro />
+              <OnKeyUpMacro />
+              <OnKeyPressMacro />
+              <OnErrorMacro />
+              <OnFilterMacro />
+              <OnApplyFilterMacro />
+              <OnTimerMacro />
+              <OnUndoMacro />
+              <OnConnectMacro />
+              <OnDisconnectMacro />
+              <PivotTableChangeMacro />
+              <QueryMacro />
+              <BeforeQueryMacro />
+              <SelectionChangeMacro />
+              <CommandBeforeExecuteMacro />
+              <CommandCheckedMacro />
+              <CommandEnabledMacro />
+              <CommandExecuteMacro />
+              <DataSetChangeMacro />
+              <BeforeScreenTipMacro />
+              <AfterFinalRenderMacro />
+              <AfterRenderMacro />
+              <AfterLayoutMacro />
+              <BeforeRenderMacro />
+              <MouseWheelMacro />
+              <ViewChangeMacro />
+              <DataChangeMacro />
+              <AllowLayoutView>True</AllowLayoutView>
+              <DatasheetAlternateBackColor>-2</DatasheetAlternateBackColor>
+              <DisplayOnSharePointSite>0</DisplayOnSharePointSite>
+              <SplitFormSize>0</SplitFormSize>
+              <RibbonName />
+              <FitToScreen>False</FitToScreen>
               <IsShadows>False</IsShadows>
               <Namespace>PremiseConfigurator</Namespace>
               <IsAbstract>False</IsAbstract>
@@ -39992,31 +39915,9 @@ Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, _</TypeAliasedNam
               <CodeElement>
                 <CommentLines />
                 <Properties>
-                  <Name>mlPrinted</Name>
-                  <FullName>PremiseConfigurator.Form_frmCreateItem.mlPrinted</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Field</Kind>
-                  <Declaration>mlPrinted As Boolean</Declaration>
-                  <Access>Private</Access>
-                  <TypeFullName>Boolean</TypeFullName>
-                  <TypeName>Boolean</TypeName>
-                  <TypeAliasedName>Boolean</TypeAliasedName>
-                  <InitExpression />
-                  <IsConstant>False</IsConstant>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                </Properties>
-              </CodeElement>
-              <CodeElement>
-                <CommentLines>
-                  <CommentLine>'Dim bTBType As Boolean</CommentLine>
-                </CommentLines>
-                <Properties>
                   <Name>CableConstruction</Name>
                   <FullName>PremiseConfigurator.Form_frmCreateItem.CableConstruction</FullName>
-                  <DocComment>'Dim bTBType As Boolean
-</DocComment>
+                  <DocComment />
                   <XmlDocComment />
                   <Kind>Field</Kind>
                   <Declaration>Dim CableConstruction As New clsCableConstruction</Declaration>
@@ -40877,43 +40778,6 @@ Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, _</TypeAliasedNam
               <CodeElement>
                 <CommentLines />
                 <Properties>
-                  <Name>FileList_BeforeUpdate</Name>
-                  <FullName>PremiseConfigurator.Form_frmCreateItem.FileList_BeforeUpdate</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Method</Kind>
-                  <Declaration>Private Sub FileList_BeforeUpdate(Cancel As Integer)</Declaration>
-                  <Access>Private</Access>
-                  <MethodKind>Sub</MethodKind>
-                  <IsOverloaded>False</IsOverloaded>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                  <IsOverridable>False</IsOverridable>
-                  <IsAbstract>False</IsAbstract>
-                  <IsOverrides>False</IsOverrides>
-                  <IsNotOverridable>False</IsNotOverridable>
-                </Properties>
-                <Parameters>
-                  <Parameter>
-                    <Properties>
-                      <Name>Cancel</Name>
-                      <FullName>PremiseConfigurator.Form_frmCreateItem.FileList_BeforeUpdate.Cancel</FullName>
-                      <DocComment />
-                      <XmlDocComment />
-                      <Kind>Parameter</Kind>
-                      <Declaration>Cancel As Integer</Declaration>
-                      <Access />
-                      <TypeFullName>Integer</TypeFullName>
-                      <TypeName>Integer</TypeName>
-                      <TypeAliasedName>Integer</TypeAliasedName>
-                      <Modifiers />
-                    </Properties>
-                  </Parameter>
-                </Parameters>
-              </CodeElement>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
                   <Name>Form_Load</Name>
                   <FullName>PremiseConfigurator.Form_frmCreateItem.Form_Load</FullName>
                   <DocComment />
@@ -41585,25 +41449,6 @@ Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, _</TypeAliasedNam
                   <XmlDocComment />
                   <Kind>Field</Kind>
                   <Declaration>Dim oldDocument As String</Declaration>
-                  <Access>Private</Access>
-                  <TypeFullName>String</TypeFullName>
-                  <TypeName>String</TypeName>
-                  <TypeAliasedName>String</TypeAliasedName>
-                  <InitExpression />
-                  <IsConstant>False</IsConstant>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                </Properties>
-              </CodeElement>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
-                  <Name>newDocument</Name>
-                  <FullName>PremiseConfigurator.Form_frmCustomerSpecs.newDocument</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Field</Kind>
-                  <Declaration>Dim newDocument As String</Declaration>
                   <Access>Private</Access>
                   <TypeFullName>String</TypeFullName>
                   <TypeName>String</TypeName>
@@ -47173,25 +47018,6 @@ Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, _</TypeAliasedNam
               <CodeElement>
                 <CommentLines />
                 <Properties>
-                  <Name>frm</Name>
-                  <FullName>PremiseConfigurator.Form_frmFindConstruction.frm</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Field</Kind>
-                  <Declaration>Dim frm As Form</Declaration>
-                  <Access>Private</Access>
-                  <TypeFullName>Form</TypeFullName>
-                  <TypeName>Form</TypeName>
-                  <TypeAliasedName>Form</TypeAliasedName>
-                  <InitExpression />
-                  <IsConstant>False</IsConstant>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                </Properties>
-              </CodeElement>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
                   <Name>btnExcelExport_Click</Name>
                   <FullName>PremiseConfigurator.Form_frmFindConstruction.btnExcelExport_Click</FullName>
                   <DocComment />
@@ -48064,25 +47890,6 @@ Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, _</TypeAliasedNam
             </Properties>
             <ImplementedInterfaces />
             <CodeElements>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
-                  <Name>CableProperties</Name>
-                  <FullName>PremiseConfigurator.Form_frmFindCutSheet.CableProperties</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Field</Kind>
-                  <Declaration>Dim CableProperties As New clsCutSheet</Declaration>
-                  <Access>Private</Access>
-                  <TypeFullName>clsCutSheet</TypeFullName>
-                  <TypeName>clsCutSheet</TypeName>
-                  <TypeAliasedName>clsCutSheet</TypeAliasedName>
-                  <InitExpression />
-                  <IsConstant>False</IsConstant>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                </Properties>
-              </CodeElement>
               <CodeElement>
                 <CommentLines />
                 <Properties>
@@ -51333,27 +51140,6 @@ Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, _</TypeAliasedNam
             </Properties>
             <ImplementedInterfaces />
             <CodeElements>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
-                  <Name>cmdL</Name>
-                  <FullName>PremiseConfigurator.Form_frmItemInterface.cmdL</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Method</Kind>
-                  <Declaration>Private Sub cmdL()</Declaration>
-                  <Access>Private</Access>
-                  <MethodKind>Sub</MethodKind>
-                  <IsOverloaded>False</IsOverloaded>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                  <IsOverridable>False</IsOverridable>
-                  <IsAbstract>False</IsAbstract>
-                  <IsOverrides>False</IsOverrides>
-                  <IsNotOverridable>False</IsNotOverridable>
-                </Properties>
-                <Parameters />
-              </CodeElement>
               <CodeElement>
                 <CommentLines />
                 <Properties>
@@ -54876,25 +54662,6 @@ Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, _</TypeAliasedNam
               <CodeElement>
                 <CommentLines />
                 <Properties>
-                  <Name>newMultiplier</Name>
-                  <FullName>PremiseConfigurator.Form_frmSalesForcePricing.newMultiplier</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Field</Kind>
-                  <Declaration>Dim newMultiplier As Double</Declaration>
-                  <Access>Private</Access>
-                  <TypeFullName>Double</TypeFullName>
-                  <TypeName>Double</TypeName>
-                  <TypeAliasedName>Double</TypeAliasedName>
-                  <InitExpression />
-                  <IsConstant>False</IsConstant>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                </Properties>
-              </CodeElement>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
                   <Name>txFinishedGood_KeyDown</Name>
                   <FullName>PremiseConfigurator.Form_frmSalesForcePricing.txFinishedGood_KeyDown</FullName>
                   <DocComment />
@@ -55297,44 +55064,6 @@ Declare Function GetDeviceCaps Lib "gdi32" (ByVal hDC As Long, _</TypeAliasedNam
             </Properties>
             <ImplementedInterfaces />
             <CodeElements>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
-                  <Name>oldDocument</Name>
-                  <FullName>PremiseConfigurator.Form_frmSalesForceStockItems.oldDocument</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Field</Kind>
-                  <Declaration>Dim oldDocument As String</Declaration>
-                  <Access>Private</Access>
-                  <TypeFullName>String</TypeFullName>
-                  <TypeName>String</TypeName>
-                  <TypeAliasedName>String</TypeAliasedName>
-                  <InitExpression />
-                  <IsConstant>False</IsConstant>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                </Properties>
-              </CodeElement>
-              <CodeElement>
-                <CommentLines />
-                <Properties>
-                  <Name>newDocument</Name>
-                  <FullName>PremiseConfigurator.Form_frmSalesForceStockItems.newDocument</FullName>
-                  <DocComment />
-                  <XmlDocComment />
-                  <Kind>Field</Kind>
-                  <Declaration>Dim newDocument As String</Declaration>
-                  <Access>Private</Access>
-                  <TypeFullName>String</TypeFullName>
-                  <TypeName>String</TypeName>
-                  <TypeAliasedName>String</TypeAliasedName>
-                  <InitExpression />
-                  <IsConstant>False</IsConstant>
-                  <IsStatic>False</IsStatic>
-                  <IsShadows>False</IsShadows>
-                </Properties>
-              </CodeElement>
               <CodeElement>
                 <CommentLines />
                 <Properties>
