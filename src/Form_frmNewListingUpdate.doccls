@@ -1,0 +1,141 @@
+﻿Option Explicit
+Option Compare Database
+
+Private Sub btnAttachSpec_Click()
+   Dim fDialog As Office.FileDialog
+   Dim varFile As Variant
+   Dim FileName As String
+   Dim FileType As String
+   Dim FilePath As String
+ 
+   ' Clear listbox contents.
+   Me.FileList.rowSource = ""
+ 
+   ' Set up the File Dialog.
+   Set fDialog = Application.FileDialog(msoFileDialogFilePicker)
+ 
+   With fDialog
+ 
+      ' Allow user to make multiple selections in dialog box
+      .AllowMultiSelect = True
+             
+      ' Set the title of the dialog box.
+      .Title = "Please select one or more files"
+ 
+      ' Clear out the current filters, and add our own.
+      .Filters.Clear
+      .Filters.Add "All Files", "*.*"
+      .Filters.Add "Access Databases", "*.MDB"
+      .Filters.Add "Access Projects", "*.ADP"
+      
+ 
+      ' Show the dialog box. If the .Show method returns True, the
+      ' user picked at least one file. If the .Show method returns
+      ' False, the user clicked Cancel.
+      If .Show = True Then
+ 
+         'Loop through each file selected and add it to our list box.
+         
+         For Each varFile In .SelectedItems
+            Me.FileList.AddItem varFile
+         Next
+        
+        'Create document name from document path
+        FilePath = FileList.ItemData(0)
+        FileType = Mid(FilePath, InStrRev(FilePath, "."), Len(FilePath) - (InStrRev(FilePath, ".") - 1))
+        FileName = InStrRev(FilePath, "\")
+        'Me.Listing = Mid(Filepath, FileName + 1, Len(Filepath) - FileName - Len(FileType))
+        Me.FileType = FileType
+
+      Else
+         'MsgBox "You clicked Cancel in the file dialog box."
+      End If
+   End With
+   
+   
+End Sub
+
+Private Sub btnClose_Click()
+DoCmd.Close
+End Sub
+
+
+Private Sub btnSubmit_Click()
+DoCmd.SetWarnings False
+Dim FilePath$
+On Error GoTo ErrorHandler:
+
+    If MsgBox("Are you ready to submit?", vbYesNo) = vbNo Then
+        Exit Sub
+    End If
+
+    If IsNull(Me.FileList.ItemData(0)) = True Then
+        If MsgBox("Do you want to attach a Spec Sheet?", vbYesNo) = vbYes Then
+            Call btnAttachSpec_Click
+            Exit Sub
+        Else
+            Exit Sub
+            MsgBox ("Update is Complete")
+        End If
+    End If
+    
+    If IsNull(Me.ReplaceDocument) = False Then
+        'DoCmd.OpenQuery "qryUpdateListingDocument"
+        DoCmd.RunSQL "UPDATE tblBurnListingDocument SET ListingDocument = '" & Me.ReplaceDocument & "' WHERE ListingDocument = '" & Me.Listing & "'"
+        'DoCmd.RunSQL "UPDATE tblBurnListingConstruction SET ListingDocument = '" & Me.Listing & "' WHERE ListingDocument = '" & Me.ReplaceDocument & "'"
+    Else
+        DoCmd.RunSQL "INSERT INTO tblBurnListingDocument (ListingCompany, ListingDocument) VALUES ( '" & Me.ListingCompany & "' , '" & Me.Listing & "')"
+    End If
+    
+    
+    
+    FilePath = Me.FileList.ItemData(0)
+    
+        
+    
+    UpdateBurnListingFile Me.Listing, FilePath, Me.FileType, Me.ListingCompany
+    
+    
+    
+
+
+Beep
+MsgBox ("Load is Complete")
+
+ErrorExit:
+Exit Sub
+
+ErrorHandler:
+''MsgBox Err.Description & " " & Err.Number
+Resume Next
+
+
+End Sub
+
+Private Sub cmdDelete_Click()
+On Error GoTo Err_cmdDelete_Click
+
+
+    DoCmd.DoMenuItem acFormBar, acEditMenu, 8, , acMenuVer70
+    DoCmd.DoMenuItem acFormBar, acEditMenu, 6, , acMenuVer70
+
+Exit_cmdDelete_Click:
+    Exit Sub
+
+Err_cmdDelete_Click:
+    MsgBox Err.Description
+    Resume Exit_cmdDelete_Click
+End Sub
+
+
+Private Sub Form_Load()
+Me.FileList.rowSource = ""
+
+End Sub
+
+Private Sub ListingCompany_AfterUpdate()
+Me.ReplaceDocument = Null
+Me.ReplaceDocument.Requery
+Me.Listing = Null
+Me.Listing.Requery
+End Sub

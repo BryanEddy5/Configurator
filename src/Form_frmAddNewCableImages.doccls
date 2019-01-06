@@ -1,0 +1,184 @@
+﻿Option Explicit
+Option Compare Database
+Dim fDialog As Office.FileDialog
+
+Private Sub btnAttachSpec_Click()
+   Dim ImageTypeID%
+
+   
+    If Not RequiredFieldsCheck Then
+        Exit Sub
+    End If
+ 
+   ' Set up the File Dialog.
+   Set fDialog = Application.FileDialog(msoFileDialogFilePicker)
+ 
+   With fDialog
+ 
+      ' Allow user to make multiple selections in dialog box
+      .AllowMultiSelect = True
+             
+      ' Set the title of the dialog box.
+      .Title = "Please select one or more files"
+      .InitialFileName = getUserProfile & "\Desktop\"
+ 
+      ' Clear out the current filters, and add our own.
+      .Filters.Clear
+      .Filters.Add "Images", "*.gif; *.jpg; *.jpeg, *.png", 1
+      
+ 
+      ' Show the dialog box. If the .Show method returns True, the
+      ' user picked at least one file. If the .Show method returns
+      ' False, the user clicked Cancel.
+      If .Show = True Then
+      
+      ImageTypeID = Me.cbFileImageType.Column(1)
+      
+      If Not modImages.AddImagesToRecordset(fDialog, ImageTypeID, Nz(Me.ckIsArmored.Value, False)) Then
+        Beep
+        MsgBox "Duplicate records found.  Some records have not been added"
+      End If
+      Me.Requery
+
+      Else
+         'MsgBox "You clicked Cancel in the file dialog box."
+      End If
+   End With
+   
+   
+End Sub
+
+Private Sub btnClearImageRecords_Click()
+    If MsgBox("Continuing will delete all image records", vbYesNo, "Delete all image records") = vbYes Then
+        Call ClearRecords
+    End If
+    
+End Sub
+
+Private Sub ClearRecords()
+DoCmd.SetWarnings False
+DoCmd.RunSQL "DELETE FROM " & Me.RecordSource
+Me.Requery
+End Sub
+
+Private Sub btnClose_Click()
+ClearRecords
+DoCmd.Close
+End Sub
+
+Private Function RequiredFieldsCheck() As Boolean
+    RequiredFieldsCheck = True
+    If IsNull(Me.cbFileImageType) Or IsNull(Me.cbImageGroupID) Then
+        MsgBox "An Image Type and Group Name must be selected to continue.", vbCritical
+        RequiredFieldsCheck = False
+    End If
+    
+    
+End Function
+
+
+Private Sub btnDeleteRecord_Click()
+On Error GoTo Err_cmdDelete_Click
+
+
+    DoCmd.DoMenuItem acFormBar, acEditMenu, 8, , acMenuVer70
+    DoCmd.DoMenuItem acFormBar, acEditMenu, 6, , acMenuVer70
+
+Exit_cmdDelete_Click:
+    Exit Sub
+
+Err_cmdDelete_Click:
+    MsgBox Err.Description
+    Resume Exit_cmdDelete_Click
+End Sub
+
+Private Sub btnSelectBase_Click()
+DoCmd.OpenForm "frmCableImagesAddBase", acNormal, , , acFormEdit
+
+
+End Sub
+
+Private Sub btnSubmit_Click()
+    Dim GroupID%, fileImageType%, groupDesc$
+    DoCmd.SetWarnings False
+    Dim rst As DAO.Recordset
+    
+    Set rst = Me.Recordset
+   
+'On Error GoTo ErrorHandler:
+
+    If Not RequiredFieldsCheck Or rst.RecordCount <= 0 Then
+        Exit Sub
+    End If
+
+
+    If MsgBox("Are you ready to submit?", vbYesNo) = vbNo Then
+        Exit Sub
+    End If
+    
+
+    fileImageType = CInt(Me.cbFileImageType.Column(1))
+    groupDesc = Me.txImageGroupDesc
+
+    'If groupid is empty then create a new one
+    'Else assign the group id
+    'Update the group description if changes have been made
+    If IsNull(Me.cbImageGroupID.Column(2)) Then
+        GroupID = modImages.AddImageGroupID(Me.cbImageGroupID, groupDesc)
+    Else
+        GroupID = Me.cbImageGroupID.Column(2)
+        If groupDesc <> Me.cbImageGroupID.Column(1) Then
+            Call modImages.UpdateImageGroupDescription(groupDesc, GroupID)
+        End If
+    End If
+    Me.cbImageGroupID.Requery
+    
+    Call CheckImageGroupReferenceExists(rst, GroupID)
+
+    'Add images to the tables and folder location
+    Call modImages.AddImages(rst, GroupID)
+    Me.Requery
+    Me.Repaint
+    If Me.Recordset.RecordCount > 0 Then
+        MsgBox "The remaining records failed to load.  See possible causes below." & vbCrLf & "Image already exists in folder location" & vbCrLf & "Image name already exists", vbCritical
+        Exit Sub
+    End If
+    
+    
+Me.imgCable.Picture = ""
+
+Beep
+MsgBox ("Load is Complete")
+
+'ErrorExit:
+'Exit Sub
+'
+'ErrorHandler:
+''MsgBox Err.Description & " " & Err.Number
+'Resume Next
+
+
+End Sub
+
+
+
+Private Sub cbImageGroupID_AfterUpdate()
+Dim ImageGroupDesc$
+
+ImageGroupDesc = Nz(Me.cbImageGroupID.Column(1), "")
+
+'If imageGroupDesc <> "" Then
+    Me.txImageGroupDesc = ImageGroupDesc
+'End If
+End Sub
+
+
+
+Private Sub SetCableImage()
+Me.imgCable.Picture = Me.ImagePath
+End Sub
+
+
+Private Sub Form_Current()
+SetCableImage
+End Sub

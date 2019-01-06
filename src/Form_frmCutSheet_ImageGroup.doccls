@@ -1,0 +1,49 @@
+﻿
+Option Explicit
+Option Compare Database
+Public Event CurrentSelection(Value As Integer)
+
+Private Sub btnAddRecord_Click()
+Me.AllowAdditions = True
+End Sub
+
+Private Sub btnDelete_Click()
+Call DeleteARecord
+
+End Sub
+
+Private Sub btnEdit_Click()
+Me.AllowEdits = True
+End Sub
+
+Private Sub btnSave_Click()
+Call LockRecords
+End Sub
+
+
+Private Sub LockRecords()
+Me.AllowEdits = False
+Me.AllowAdditions = False
+
+End Sub
+
+
+Private Sub FilterResults()
+
+'Debug.Print Me.Parent.sfCutSheetCableImages.Form.RecordSource
+'Me.Parent.sfCutSheetCableImages.Form.RecordSource = "SELECT * FROM CutSheet_vImageGroupPivotImages WHERE ImageGroupID = " & Me.ImageGroupID
+'Me.Parent.lstBases.rowSource = "SELECT Base, SalesForceDescription, ImageGroupID FROM tblCableConstructionReferences INNER JOIN tblDesignTypes " _
+'    & " ON tblCableConstructionReferences.DesignTypeID = tblDesignTypes.DesignTypeID  WHERE ImageGroupID = " & Me.ImageGroupID _
+'    & " ORDER BY SalesForceDescription"
+
+End Sub
+
+Private Sub Form_Current()
+    Me.txCurrentField = Me.ImageGroupID
+    RaiseEvent CurrentSelection(Me.ImageGroupID)
+    FilterResults
+End Sub
+
+Private Sub Form_Load()
+Call LockRecords
+End Sub

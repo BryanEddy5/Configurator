@@ -1,0 +1,283 @@
+﻿Option Compare Database
+Option Explicit
+Private Item As New clsCableQualities
+Private mlConstruction As New clsCableConstruction
+Private currUser As New clsUser
+Private WithEvents m_frm As Form_frmSelector
+
+
+Private Sub btnClearFilter_Click()
+Call clearData
+End Sub
+
+Private Sub btnClearSalesFilter_Click()
+Call applyFilter
+End Sub
+
+Friend Property Get frmSelector() As Form_frmSelector
+If m_frm Is Nothing Then m_frm = New Form_frmSelector
+Set frmSelector = m_frm
+End Property
+
+
+
+Private Sub btnCutSheet_Click()
+On Error GoTo ErrorHandler
+
+
+
+If Item.getSpecSheetApprovalStatus = "no spec available" Then
+    Exit Sub
+End If
+
+    cutSheet.OpenCutSheet (Me.txOracleItem)
+    
+ErrorExit:
+DoCmd.Hourglass False
+Exit Sub
+
+ErrorHandler:
+If Err.Number = 94 Then
+    GoTo ErrorExit
+Else
+    MsgBox Err.Number & " " & Err.Description
+End If
+
+End Sub
+
+
+Private Sub btnFiberClose_Click()
+
+Beep
+If MsgBox("Are you sure you want to exit?", vbYesNo) = vbYes Then
+    DoCmd.Quit
+End If
+    
+End Sub
+
+Private Sub btnRemoveFilter_Click()
+
+Me.txOracleItem = Empty
+Call applyFilter
+
+End Sub
+
+
+Private Sub btnFilter_Click()
+    Call applyFilter
+End Sub
+
+Private Sub btnRequest_Click()
+'''Request spec sheet approval'''
+
+On Error GoTo ErrorHandler:
+
+If Item.getSpecSheetApprovalStatus = "no spec available" Then
+    Exit Sub
+End If
+
+DoCmd.Hourglass True
+
+
+    Call cutSheet.RequestCutSheet(Me.txOracleItem, Item.Base)
+    
+    Me.txOracleItem.SetFocus
+    getItemData
+    
+ErrorExit:
+DoCmd.Hourglass False
+Exit Sub
+
+ErrorHandler:
+If Err.Number = 94 Then
+    GoTo ErrorExit
+Else
+    MsgBox Err.Number & " " & Err.Description
+End If
+
+End Sub
+
+Private Sub btnSortDescending_Click()
+Me.OrderBy = "[DATE] DESC"
+Me.OrderByOn = True
+End Sub
+
+Private Sub btnSalesHistory_Click()
+Dim salesFormName$
+salesFormName = "frmItemSearchSalesHistory"
+If Not IsNull(Me.txOracleItem) Then
+    DoCmd.OpenForm salesFormName, acNormal
+    Forms!frmItemSearchSalesHistory.RecordSource = "SELECT * FROM dbo_vSalesHistory WHERE ITEM_NUMBER = '" & Me.txOracleItem & "'"
+End If
+End Sub
+
+Private Sub btnSearchItems_Click()
+   'Dim sel As New cSelector
+   'DoCmd.OpenForm m_frm.Name, , , , , acDialog
+   
+   Set m_frm = New Form_frmSelector
+   
+   frmSelector.Visible = True
+   
+   
+'   'run its load method, passing in required data, including the SQL that drives the list
+'   sel.Load _
+'    "Item Selector", _
+'      "Please select an Item from the list.  Notice that as you type in search text field, the list is filtered.", _
+'      "SELECT Oracle, ItemNo FROM vfindCutSheet", _
+'      "1;3;3;3;2"
+'
+'   'run selector's show method, which opens the form as acDialog and pauses execution here
+'   sel.Show
+'
+   ''when the selector is close, execution resumes...
+'   If Not sel.Cancelled Then
+'      'and you can read the values returned by the cSelector class
+'      Me.txOracleItem = sel.ReturnValue
+'      Me.getItemData
+'   Else
+'      MsgBox "You cancelled the selection", vbCritical
+'   End If
+End Sub
+
+
+
+Private Sub Form_Load()
+    
+
+    Me.Version = VersionCheck.getVersion
+    currUser.Load
+    Me.User = GetCurrentUser
+
+   
+Call applyFilter
+    Me.txOracleItem.SetFocus
+
+End Sub
+
+Sub getItemData()
+Dim CableWeight#
+
+On Error GoTo ErrorHandler:
+DoCmd.Hourglass True
+    
+
+    If Item.Load(UCase(Me.txOracleItem)) = False Then
+        MsgBox "Item could not be found"
+        GoTo ErrorExit
+    End If
+    
+    mlConstruction.Load (Item.Base)
+    CableWeight = BOM.BOM_WeightCalculator(Me.txOracleItem)
+    
+    Me.txItemNo = Item.ItemNo
+    Me.txWeight_kgkm = CableWeight & " kg/km"
+    Me.txWeight_lbkft = CommonFunctions.RoundRanges(CableWeight * 0.671969) & " lb/kft"
+    Me.txPrint = Item.getPrintString
+    Me.txSpecStatus = Item.getSpecSheetApprovalStatus
+    Me.txColor = Item.CableColor
+    Me.txItemCustomer = Item.Customer
+    Me.txOracleItem = UCase(Me.txOracleItem)
+    Me.txODmm = MechPropertiesFormat("mm", 1, mlConstruction.NominalOD)
+    Call SpecSheetButtonVisible(Item.getSpecSheetApprovalStatus)
+
+
+ErrorExit:
+DoCmd.Hourglass False
+Exit Sub
+
+ErrorHandler:
+DoCmd.Echo True
+If Err.Number = 94 Then
+    GoTo ErrorExit
+Else
+    MsgBox Err.Number & " " & Err.Description
+End If
+
+
+End Sub
+
+
+
+Private Sub SpecSheetButtonVisible(SpecStatus As String)
+Dim btnVisible As Boolean
+Dim btnSpecVisible As Boolean
+
+btnVisible = False
+btnSpecVisible = False
+
+Select Case SpecStatus
+    Case "Not Approved"
+        btnVisible = True
+        btnSpecVisible = True
+    Case "NO SPEC AVAILABLE"
+        btnVisible = False
+        btnSpecVisible = False
+    Case Else
+        btnVisible = False
+        btnSpecVisible = True
+End Select
+    Me.btnRequest.Visible = btnVisible
+    Me.btnCutSheet.Visible = btnSpecVisible
+End Sub
+
+Private Sub Form_Unload(Cancel As Integer)
+Application.SetOption "Auto Compact", True
+End Sub
+
+Private Sub m_frm_Selected(Value As String)
+Me.txOracleItem = Value
+Call getItemData
+
+End Sub
+
+Private Sub txOracleItem_KeyDown(KeyCode As Integer, Shift As Integer)
+If KeyCode = vbKeyReturn Then
+        Me.btnFilter.SetFocus
+        Call applyFilter
+    End If
+End Sub
+Private Sub clearData()
+
+Dim ctrl As Variant
+
+For Each ctrl In Me.Detail.Controls
+    If ctrl.Name Like "tx*" Then ' And ctrl.Name <> "txOracleItem" Then
+        'Debug.Print ctrl.Name
+        ctrl.Value = Empty
+    End If
+Next
+
+
+Call applyFilter
+
+
+End Sub
+
+
+Private Sub applyFilter()
+'DoCmd.Echo False
+
+'Call clearData
+
+Me.getItemData
+
+'Call SetRecordSource
+
+'DoCmd.Echo True
+End Sub
+
+Sub headerVisibility(Visible As Boolean)
+Dim ctrl As Variant
+
+For Each ctrl In Me.FormHeader.Controls
+    If Not ctrl.Name Like "btn*" And ctrl.Name <> Me.txOracleItem.Name Then
+        ctrl.Visible = Visible
+    End If
+Next
+
+Me.Refresh
+
+End Sub
+
+

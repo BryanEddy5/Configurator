@@ -1,0 +1,312 @@
+﻿Option Compare Database
+Option Explicit
+Dim NumSubsTopLocation As Integer
+Dim CableWeight As Double
+Dim CableProperties As New clsCutSheet
+Dim ArmorProperties As New clsCutSheet
+Dim cableConstruciton As New clsCableConstruction
+
+Private Sub Report_Load()
+
+
+    On Error GoTo ErrorHandler:
+
+    Dim Item As String
+    Dim iLocation As Integer
+    Dim sPrintLine As String
+    Dim bIsArmored As Boolean
+    Dim sBurnPrintCheck As String
+    Dim bCorningSpecificFiber As Boolean
+
+
+    If IsNull(sCutSheetItem) Then
+        MsgBox "Cannot find item"
+        Exit Sub
+    End If
+
+    sCutSheetItem = Me.Oracle
+
+    If Me.Oracle Like "*-??ia*" Then
+        Item = FindCoreCable(Me.Oracle)
+        bIsArmored = 1
+    Else
+        Item = Me.Oracle
+        bIsArmored = 0
+    End If
+    iLocation = Me.Location
+
+    If CableProperties.Load(Item) = False Or ArmorProperties.Load(Nz(Me.Oracle, Item)) = 0 Then
+        MsgBox "Cable information is missing", vbCritical
+        GoTo ErrorHandler
+    End If
+
+
+    'Me.txTensionLongTerm = CableProperties.TensionLongTerm
+    Me.lblDescription = CableProperties.Description
+    Me.txTensionLongTerm = RoundTensile(CableProperties.TensileRatingLongTerm_N) & " N"
+    Me.txTensionLongTerm_lbf = RoundTensile(CableProperties.TensileRatingLongTerm_N * 0.22481) & " lbf"
+    Me.txTensionShortTerm = CableProperties.TensileRatingShortTerm_N & " N"
+    Me.txTensionShortTerm_lbf = RoundTensile(CableProperties.TensileRatingShortTerm_N * 0.22481) & " lbf"
+    Me.txStorageTemp = CableProperties.StorageShipping_C & " C"
+    Me.txOperationTemp = CableProperties.Operation_C & " C"
+    Me.txInstallationTemp = CableProperties.Installation_C & " C"
+    Me.txFiberCount = CableProperties.FiberCount
+    Me.txNumFillers = CableProperties.NumFillers
+    Me.txNumSubs = CableProperties.NumSubs
+
+    'Find Cable Item Image
+
+
+
+    If IsNull(Me.txFiber2) = False And Me.txFiber2 <> "NONE" Then
+        Me.subFiber2.Visible = True
+    End If
+
+    Call MechProperties(bIsArmored)
+    Me.imgCableIsometricImage.Picture = CableImage(CableProperties.Base, Me.Color, 2, bIsArmored)
+    Me.imgCableCrossSectionImage.Picture = CableImage(CableProperties.Base, Me.Color, 1, bIsArmored)
+
+
+    Me.lbCoreOD.top = NumSubsTopLocation
+    Me.txCoreOD.top = NumSubsTopLocation
+    Me.txCoreODinches.top = NumSubsTopLocation
+
+    'If single pass cable, hide sub and filler count
+    If CableProperties.Location = 1 Then
+        Me.txNumFillers.Visible = False
+        Me.lbNumFillers.Visible = False
+        Me.txNumSubs.Visible = False
+        Me.lbNumSubs.Visible = False
+        Me.lblSubOD.Visible = False
+        Me.txSubOD.Visible = False
+        Me.txSubODInches.Visible = False
+    Else
+        Me.txNumFillers.Visible = True
+        Me.lbNumFillers.Visible = True
+        Me.txNumSubs.Visible = True
+        Me.lbNumSubs.Visible = True
+        Me.lblSubOD.Visible = True
+        Me.txSubOD.Visible = True
+        Me.txSubODInches.Visible = True
+        Me.lblSubOD.top = Me.lbNumFillers.top + Me.lblSubOD.Height
+        Me.txSubOD.top = Me.lbNumFillers.top + Me.lblSubOD.Height
+        Me.txSubODInches.top = Me.lbNumFillers.top + Me.lblSubOD.Height
+            If bIsArmored Then
+                Me.txNumFillers.top = NumSubsTopLocation + Me.txNumFillers.Height * 2
+                Me.lbNumFillers.top = NumSubsTopLocation + Me.txNumFillers.Height * 2
+                Me.txNumSubs.top = NumSubsTopLocation + Me.txNumFillers.Height
+                Me.lbNumSubs.top = NumSubsTopLocation + Me.txNumFillers.Height
+                Me.txSubOD.top = Me.lbNumFillers.top + Me.lblSubOD.Height
+                Me.txSubODInches.top = Me.lbNumFillers.top + Me.lblSubOD.Height
+                Me.lblSubOD.top = Me.lbNumFillers.top + Me.lblSubOD.Height
+            End If
+    End If
+
+
+
+
+
+
+    'Identifies if the cable is armored and
+
+
+    Me.txWeight_kg_km = CableWeight & " kg/km"
+    Me.txWeight_lb_kft = RoundRanges(CableWeight * 0.671969) & " lb/kft"
+
+    'Apply burn listing information
+    Me.txStandards = FindStandards(CableProperties.BaseID)
+
+    If bIsArmored = False Then
+        sPrintLine = Nz(Me.PrintLine3)
+        sBurnPrintCheck = Nz(Me.PrintLine2) & " " & Nz(Me.PrintLine3) & " "
+        sCutSheetItem = ""
+    Else
+
+        sPrintLine = FindItemData(sCutSheetItem, "PrintLine3")
+        sBurnPrintCheck = FindItemData(sCutSheetItem, "PrintLine2") & " " & sPrintLine & " "
+    End If
+
+    If sBurnPrintCheck Like "*corning*" Then
+        bCorningSpecificFiber = 1
+    Else
+        bCorningSpecificFiber = 0
+    End If
+
+    Me.txFiberCode = FiberCode(Me.Fiber, bCorningSpecificFiber)
+
+
+
+
+
+    'Determine the cable rating information
+    'Pulls burn listing information from print string
+    If sPrintLine Like "*msha*" Or sPrintLine Like "*of*" Then
+        Me.txBurnListing = CableRatingPrint(sBurnPrintCheck, Me.lblDesignCode)
+        Me.txCableRatingCanada = CableRatingPrintCanada(sBurnPrintCheck, Me.lblDesignCode)
+        Me.txStandards = Me.txStandards & FindSafetyTest(Me.txBurnListing)
+    End If
+
+    If Me.[Print Item No] <> 0 And IsNull(Me.PrintLine1) = False Then
+        Me.txPrintLine3 = Me.DesignCode & " " & sPrintLine
+    ElseIf IsNull(Me.PrintLine1) = False Then
+        Me.txPrintLine3 = sPrintLine
+    End If
+
+    If Not Me.txStandards Like "*CSA*" And IsNull(Me.txCableRatingCanada) = False Then
+        Me.txStandards = Me.txStandards & FindSafetyTest(Me.txCableRatingCanada)
+    End If
+
+     Me.lbCoreOD.Visible = True
+
+    If Nz(ArmorProperties.getCutSheetApproval, 1) * CableProperties.getCutSheetApproval = False Then
+        Me.imgDraft.Visible = True
+        'MsgBox "Spec sheet has not been approved", vbCritical
+    Else
+        Me.imgDraft.Visible = False
+    End If
+
+    Me.txRevision = "Rev " & SpecRev()
+
+
+
+ErrorExit:
+
+    Exit Sub
+
+
+ErrorHandler:
+    If Err.Number = 2220 Then
+        'MsgBox "Missing cable image.  Error: " & Err.Number, vbCritical
+        'Me.imgCableIsometricImage.Picture = ImageIsometricPath & "MissingImage.png"
+        Resume Next
+    'MsgBox "Construction is missing information.  Contact Product Engineering department", vbCritical
+    ElseIf Err.Number = 94 Then
+    Resume Next
+    Else
+    Resume Next
+    MsgBox Err.Number & " " & Err.Description
+    End If
+    Resume ErrorExit
+
+
+End Sub
+
+Function CableImage(Base As String, Color As String, ImageType As Integer, Armored As Boolean) As String
+
+    Dim sImage As String
+
+'    If ImageType = 2 Then
+'        sPath = ImageIsometricPath
+'    ElseIf ImageType = 1 Then
+'        sPath = ImageCrossSectionPath
+'    Else
+'        MsgBox "Missing Cable Image. Error: 2220", vbCritical
+'        Me.imgCableIsometricImage.Picture = sPath & "MissingImage.png"
+'        Exit Function
+'    End If
+
+    sImage = getBaseImage(Base, Color, ImageType, Armored)
+
+    CableImage = modImages.ImagesCablePath & sImage
+
+
+
+End Function
+
+
+
+
+Private Sub MechProperties(bIsArmored As Boolean)
+'''Load mechanical properties to the report'''
+
+Dim sArmorData As Scripting.Dictionary
+Dim dbNominalOD As Double
+Dim shortTermBendRadius As Double, longTermBendRadius As Double
+
+    If CableProperties.Location = 2 Then
+        'Me.txSubOD = CableProperties.cableConstruction.SubOD
+
+       cableConstruciton.Load (CableProperties.Base)
+        Me.txSubOD = MechPropertiesFormat("mm", 1, cableConstruciton.SubOD)
+        Me.txSubODInches = MechPropertiesFormat("in", 2, cableConstruciton.SubOD / 25.4)
+
+    End If
+
+
+If bIsArmored = True Then
+
+    Set sArmorData = RetrieveItemData(sCutSheetItem)
+    dbNominalOD = CDbl(sArmorData.Item("NominalOD"))
+    CableWeight = BOM_WeightCalculator(sCutSheetItem)
+    NumSubsTopLocation = Me.txNumSubs.top
+Else
+    dbNominalOD = CDbl(Me.txNominalOD)
+    CableWeight = BOM_WeightCalculator(Me.Oracle)
+
+End If
+
+    If dbNominalOD < 2.5 Then
+        shortTermBendRadius = 3.333333 * 1.5
+        longTermBendRadius = 2.5
+    ElseIf dbNominalOD * 1.5 < 5 Then
+        shortTermBendRadius = 3.3333 * 1.5
+        longTermBendRadius = dbNominalOD
+    Else
+        shortTermBendRadius = dbNominalOD * 1.5
+        longTermBendRadius = dbNominalOD
+    End If
+    Me.txNomOD = MechPropertiesFormat("mm", 1, dbNominalOD)
+    Me.txNomODinches = MechPropertiesFormat("in", 2, dbNominalOD / 25.4)
+    Me.txBendShortTerm = MechPropertiesFormat("cm", 1, shortTermBendRadius)
+    Me.txBendShortTermInches = MechPropertiesFormat("in", 1, shortTermBendRadius / 2.54)
+    Me.txBendLongTerm = MechPropertiesFormat("cm", 1, longTermBendRadius)
+    Me.txBendLongTermInches = MechPropertiesFormat("in", 1, longTermBendRadius / 2.54)
+
+
+
+
+    Me.txCoreOD = Format(Round(CableProperties.NominalOD, 1), "#,##.0") & " mm"
+    Me.txCoreODinches.Value = Format(Round(CDbl(CableProperties.NominalOD) / 25.4, 2), "#,##.00") & " in"
+
+
+
+    Me.lbCoreOD.Visible = bIsArmored
+    Me.txCoreOD.Visible = bIsArmored
+    Me.txCoreODinches.Visible = bIsArmored
+
+
+
+
+
+End Sub
+
+
+
+Private Sub Report_NoData(Cancel As Integer)
+
+MsgBox "No information found for this item.  Please contact product engineering", vbCritical
+
+'DoCmd.Close acReport, Me.Name
+
+End Sub
+
+Private Function SpecRev() As String
+
+Dim strSQL As String
+Dim rst As New ADODB.Recordset
+Dim cnn As ADODB.Connection
+
+Set cnn = CurrentProject.Connection
+
+strSQL = "SELECT Version FROM tblCutSheet_Revisions ORDER BY CreationDate DESC"
+
+rst.Open (strSQL), cnn, adOpenStatic, adLockReadOnly
+
+
+SpecRev = rst!Version
+
+
+
+End Function
+
+

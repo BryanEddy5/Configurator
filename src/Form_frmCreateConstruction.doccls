@@ -1,0 +1,535 @@
+﻿Option Compare Database
+Option Explicit
+Private blnGood, isConstructionLoaded As Boolean
+Private CablePasses As Integer
+Private CableCon As New clsCableConstruction
+Public newCableCon As New clsCableConstruction
+Private m_SubCon As New clsCableConstruction
+Private m_SubFiberCount#, m_NumSubs#, m_FibersPerBundle#, m_NumFiller#, m_NumCuUnit#
+Dim mlDesignCode As String
+
+Private Property Get CableDesignCode() As String
+mlDesignCode = Me.txDesignCode
+CableDesignCode = mlDesignCode
+End Property
+
+Private Property Get SubDesignCodeOD() As String
+SubDesignCodeOD = Right(SubCon.DesignCode, 2)
+End Property
+
+Private Property Get SubFiberCount() As Integer
+m_SubFiberCount = Nz(Me.cbSubunit_2Pass.Column(1), 0)
+SubFiberCount = m_SubFiberCount
+End Property
+
+Private Property Get NumSubCount() As Integer
+m_NumSubs = Nz(Me.txNumSubs_2Pass, 0)
+NumSubCount = m_NumSubs
+End Property
+
+Private Property Get SubCon() As clsCableConstruction
+m_SubCon.Load (Me.cbSubunit_2Pass)
+Set SubCon = m_SubCon
+End Property
+
+Private Property Get SubFibersPerBundle() As Integer
+m_FibersPerBundle = SubCon.FibersPerBundle
+SubFibersPerBundle = m_FibersPerBundle
+End Property
+
+Private Property Get NumFillerCount() As Integer
+m_NumFiller = Nz(Me.txNumFillers_2Pass, 0)
+NumFillerCount = m_NumFiller
+End Property
+
+Private Property Get NumCuUnitCount() As Integer
+m_NumCuUnit = Nz(Me.txNumCu_2Pass, 0)
+NumCuUnitCount = m_NumFiller
+End Property
+
+Private Sub TwoPassUpdate()
+Me.txFibersPerBundle_1Pass = SubFibersPerBundle
+Call Get2PassDesignCode
+Call Get2PassDesignCodeExtension
+
+Call updateCableIndicators
+
+End Sub
+Private Sub Get2PassDesignCode()
+Me.txDesignCode = Left(Me.txDesignCode, 2) & Format(SubFiberCount * (NumSubCount - NumFillerCount - m_NumCuUnit), "000") & SubDesignCodeOD
+
+End Sub
+
+Private Sub Get2PassDesignCodeExtension()
+Me.txDesignCodeExt = ":" & HexLetter(SubFiberCount) & HexLetter(NumSubCount) & HexLetter(SubFibersPerBundle)
+
+End Sub
+
+
+Private Sub btnAddNPR_Click()
+DoCmd.OpenForm "frmCableFamily"
+End Sub
+
+Private Sub btnBurnListing_Click()
+
+DoCmd.OpenForm "frmBurnListingAddNewBase"
+
+
+Call Forms("frmBurnListingAddNewBase").btnAdd_Click
+
+End Sub
+
+Private Sub btnClearFiller_2Pass_Click()
+Me.cbFiller_2Pass = Null
+End Sub
+
+
+
+Private Sub btnClearSub_2Pass_Click()
+Me.cbSubunit_2Pass = Null
+End Sub
+
+Private Sub btnClose_Click()
+If blnGood = False Then
+    If MsgBox("Your work is not saved.  Are you sure you want to quit?", vbYesNo) = vbYes Then
+        DoCmd.Close acForm, Me.Name
+    End If
+Else
+    DoCmd.Close acForm, Me.Name
+End If
+End Sub
+Private Sub ClearTables()
+
+DoCmd.RunSQL "DELETE FROM tblCableConstructions_Local"
+DoCmd.RunSQL "DELETE FROM tblCableConstructionReferences_Local"
+End Sub
+
+Private Sub btnCopy_Click()
+
+
+
+
+
+On Error GoTo ErrorHandler:
+
+If IsNull(Me.cbBase_Copy) Then
+    Exit Sub
+End If
+
+Dim lResponse As String
+isConstructionLoaded = False
+
+Me.cbBase_Copy.SetFocus
+
+CableCon.Load (Me.cbBase_Copy)
+
+
+
+lResponse = MsgBox("Copy base and construction?", vbYesNo)
+
+
+'Me.Requery
+DoCmd.Echo False
+
+Call ClearTables
+
+
+
+
+DoCmd.OpenQuery "qryfrmCreateConstruction_Reference_LOAD"
+
+
+'Check if users wants to load the construction
+'User may only want to create a new base using an old construction
+If lResponse = vbYes Then
+    'Load construction information
+    DoCmd.OpenQuery "qryfrmCreateConstruction_Construction_LOAD"
+    isConstructionLoaded = True
+
+End If
+
+
+Me.Requery
+Me.Refresh
+
+CablePasses = Me.cbBase_Copy.Column(1)
+
+
+Me.cbCablePasses = CablePasses
+
+Me.cbSubunit_2Pass = CableCon.subBase
+Me.cbFiller_2Pass = CableCon.fillerBase
+
+mlDesignCode = Me.DesignCode
+
+Call HideFields
+Call updateCableIndicators
+Call CheckBaseExists
+Call CheckStdOpExists
+DoCmd.Echo True
+
+ErrorExit:
+Exit Sub
+
+ErrorHandler:
+If Err.Number = 3167 Then
+    Resume
+Else
+MsgBox (Err.Number & " - " & Err.Description), vbCritical
+End If
+Resume ErrorExit
+
+
+
+
+End Sub
+
+Private Sub btnOpenBase_Click()
+    If IsNull(Me.cbBase_Copy) Then
+        Exit Sub
+    End If
+    
+    Call OpenAClient(3, Me.cbBase_Copy, Nz(Me.cbBase_Copy.Column(1), 2))
+End Sub
+
+Private Sub btnOpenFiller_2Pass_Click()
+    If IsNull(Me.cbFiller_2Pass) Then
+        Exit Sub
+    End If
+
+    Call OpenAClient(3, Me.cbFiller_2Pass, 1)
+End Sub
+
+Private Sub btnOpenSub_2pass_Click()
+
+    If IsNull(Me.cbSubunit_2Pass) Then
+        Exit Sub
+    End If
+Call OpenAClient(3, Me.cbSubunit_2Pass, 1)
+End Sub
+
+
+Private Sub btnSave_Click()
+Dim StdOp As String
+Dim Base As String
+Dim CableCheck As New clsCableConstruction
+Dim ctl As Variant
+Dim errMsg As String
+
+On Error GoTo ErrorHandler:
+DoCmd.SetWarnings False
+
+    blnGood = True
+    Base = Me.txBase
+    
+    errMsg = "Red issues must be resolved before continuing"
+    For Each ctl In Me.Controls
+        If ctl.Name Like "*_Err" And ctl.Visible Then
+            MsgBox errMsg, vbCritical
+            Exit Sub
+        End If
+    Next ctl
+    
+    If isConstructionLoaded Then
+        For Each ctl In Me.frmCreateConstruction_CableConstruction.Form.Controls
+        If ctl.Name Like "*_Err" And ctl.Visible Then
+            MsgBox errMsg, vbCritical
+            Exit Sub
+        End If
+        Next ctl
+    End If
+    
+    Me.Requery
+    Me.Refresh
+    Me.btnCopy.SetFocus
+
+    
+    'Check to see if construction is loaded
+    If isConstructionLoaded Then
+        StdOp = Me.frmCreateConstruction_CableConstruction.Form.txSetup
+        'Load cable construction
+        DoCmd.OpenQuery "qryNewCableConstructionLOAD"
+        'Check to see if the cable loaded correctly
+        If CableCheck.SetupExist(StdOp) = False Then
+            MsgBox "Cable load unsuccessful.", vbCritical
+            Exit Sub
+        End If
+        'Get BaseID to load into the construction References
+        Me.txBaseID = CableCheck.BaseID
+            Me.Requery
+    End If
+    'Load Cable Construction Reference data into live table
+    
+        DoCmd.OpenQuery "qryNewCableConstructionReferenceLOAD"
+    
+    
+    'Check to see if construction references loaded correctly
+    If CableCheck.BaseExist(Base) = False Then
+        MsgBox "Cable load unsuccessful.", vbCritical
+        Exit Sub
+    End If
+    
+    
+    If Me.cbCablePasses = 2 Then
+    'Load sub
+        If IsNull(Me.cbSubunit_2Pass) = False Then
+            DoCmd.RunSQL ("INSERT INTO [Product Desrcriptions]( [Level 1 Product], ProductID) VALUES ( '" & Me.cbSubunit_2Pass & "'," & CableCheck.SetupID & ")")
+        End If
+    'Load Filler
+        If IsNull(Me.cbFiller_2Pass) = False Then
+            DoCmd.RunSQL ("INSERT INTO [Product Desrcriptions]([Level 1 Product], ProductID, SubFiller) VALUES ( '" & Me.cbFiller_2Pass & "'," & CableCheck.SetupID & ", 1)")
+        End If
+    End If
+    
+    Beep
+    MsgBox "Construction has been loaded"
+    
+    If MsgBox("Would you like to create another construction?", vbYesNo) = vbYes Then
+        Call ClearTables
+        Me.Requery
+        Me.Refresh
+    Else
+    
+        DoCmd.Close acForm, Me.Name
+    End If
+    
+ErrorExit:
+Exit Sub
+
+ErrorHandler:
+MsgBox (Err.Number & " - " & Err.Description), vbCritical
+Resume ErrorExit
+
+
+End Sub
+
+Private Sub cbBase_Copy_KeyDown(KeyCode As Integer, Shift As Integer)
+
+
+
+If KeyCode = vbKeyReturn Then
+        Me.btnCopy.SetFocus
+        Call btnCopy_Click
+    End If
+
+End Sub
+
+Private Sub cbDesignGroup_AfterUpdate()
+Me.cbDesignType = Null
+Me.cbDesignType.Requery
+Call cbDesignType_AfterUpdate
+
+End Sub
+
+Private Sub cbCablePasses_AfterUpdate()
+Call HideFields
+End Sub
+
+Private Sub HideFields()
+
+Dim bVisible As Boolean
+Dim ctl As control
+
+If Me.cbCablePasses = 1 Then
+    bVisible = False
+Else
+    bVisible = True
+End If
+    
+
+For Each ctl In Me.Controls
+    If ctl.Name Like "*2pass" Then
+        ctl.Visible = bVisible
+    'ElseIf ctl.Name Like "*1pass" Then
+        'ctl.Visible = Not bVisible
+    End If
+Next ctl
+
+If isConstructionLoaded = True Then
+    Me.frmCreateConstruction_CableConstruction.Form.txCablePasses = Me.cbCablePasses
+End If
+
+End Sub
+
+Private Sub cbDesignType_AfterUpdate()
+Me.cbFamilyID = Null
+Me.cbFamilyID.Requery
+
+End Sub
+
+
+Private Sub cbFiller_2Pass_AfterUpdate()
+Call TwoPassUpdate
+End Sub
+
+Private Sub cbSubunit_2Pass_AfterUpdate()
+Call TwoPassUpdate
+End Sub
+
+Private Sub Form_Delete(Cancel As Integer)
+Me.Requery
+Me.Refresh
+End Sub
+
+Private Sub Form_Load()
+    Call ClearTables
+    Me.Requery
+    Me.Refresh
+End Sub
+
+Private Sub txBase_AfterUpdate()
+Dim Exist As Boolean
+
+Exist = CheckBaseExists()
+If Exist = False Then
+    newCableCon.Base = Me.txBase
+End If
+
+End Sub
+
+Private Sub txDesignCode_AfterUpdate()
+
+Call updateCableIndicators
+
+End Sub
+
+Private Sub txDesignCode_Change()
+mlDesignCode = Me.txDesignCode.Text
+Call updateCableIndicators
+
+End Sub
+
+Private Sub txDesignCodeExt_AfterUpdate()
+Call updateCableIndicators
+End Sub
+
+Private Sub Form_Error(DataErr As Integer, Response As Integer)
+    Const conDuplicateKey = 3146
+    Const conKey = 3621
+    Dim strErrMsg As String
+
+    Select Case DataErr
+        Case conDuplicateKey:
+            strErrMsg = "Record already exists in the database!"
+        Case conKey:
+            strErrMsg = "Key field must be completed to save"
+        Case Else
+            Response = acDataErrDisplay
+    End Select
+
+    If strErrMsg <> vbNullString Then
+        MsgBox strErrMsg, vbCritical, Me.Caption
+        ActiveControl.Undo
+        Response = acDataErrContinue
+    End If
+
+End Sub
+
+
+Private Sub updateCableIndicators()
+Dim isLen As Boolean
+
+Dim FiberBundle, iFiberCount As Integer
+Dim FiberCount As String
+
+
+isLen = Len(CableDesignCode) <> 7
+
+Call PaintExistingRed(Me.txDesignCode, Me.lbDesignCodeLen_Err, isLen)
+
+Me.txCableFamily = Left(CableDesignCode, 1)
+Me.txCableLevel1 = Mid(CableDesignCode, 2, 1)
+FiberCount = Mid(CableDesignCode, 3, 3)
+
+If IsNumeric(FiberCount) Then
+    FiberCount = FiberCount
+Else
+    FiberCount = 0
+End If
+
+iFiberCount = FiberCount
+
+'Commented out logic
+'If a single pass cable then hide the fibers per bundle field
+'If Me.cbCablePasses = 1 Then
+    If Me.txDesignCodeExt Like "*:*" Then
+    'Logic for determining fiber bundle from design code extension
+    ElseIf Me.cbTBType.Column(1) = 3 Or Me.cbTBType = 31 Or Me.cbTBType = 9 Then
+        If iFiberCount = 0 Then
+            FiberBundle = 0
+        ElseIf iFiberCount Mod 12 = 0 Then
+            FiberBundle = 12
+        ElseIf iFiberCount Mod 8 = 0 Then
+            FiberBundle = 8
+        ElseIf iFiberCount Mod 9 = 0 Then
+            FiberBundle = 9
+        Else
+            FiberBundle = FiberCount
+        End If
+    ElseIf Me.cbTBType = 20 Then
+        FiberBundle = 4
+            Me.txFibersPerBundle_1Pass = FiberBundle
+    ElseIf iFiberCount > 0 Then
+        Me.txFibersPerBundle_1Pass = 1
+    Else
+        Me.txFibersPerBundle_1Pass = Null
+    End If
+'Else
+'    Me.txFibersPerBundle_1Pass = Null
+'End If
+
+Me.Base = Left(Me.txDesignCode, 5) & "-" & Mid(Me.txDesignCode, 6, 1) & "." & Mid(Me.txDesignCode, 7, 1) & Nz(Me.DesignExtension, "")
+
+Call txBase_AfterUpdate
+
+Me.txFiberCount = FiberCount
+
+End Sub
+
+Private Function CheckBaseExists() As Boolean
+Dim Cable As New clsCableConstruction
+Dim Exists As Boolean
+
+Exists = Cable.BaseExist(Base)
+
+Call PaintExistingRed(Me.txBase, Me.lbBaseExists_Err, Exists)
+
+
+End Function
+
+Private Sub CheckStdOpExists()
+
+'Paint the background of control and show label
+If isConstructionLoaded Then
+    Call Me.frmCreateConstruction_CableConstruction.Form.txSetup_AfterUpdate
+End If
+
+End Sub
+
+Public Sub PaintExistingRed(TextBox As control, Warning As control, Exists As Boolean)
+'Paint the background of control and show label
+If Exists = True Then
+    TextBox.BackColor = RGB(255, 0, 0)
+    Warning.Visible = True
+Else
+    TextBox.BackColor = RGB(255, 255, 255)
+    Warning.Visible = False
+End If
+
+
+End Sub
+
+Public Sub SetIsConstructionLoaded(IsLoaded As Boolean)
+
+isConstructionLoaded = IsLoaded
+
+
+End Sub
+
+Private Sub txNumFillers_2Pass_AfterUpdate()
+Call TwoPassUpdate
+End Sub
+
+Private Sub txNumSubs_2Pass_AfterUpdate()
+Call TwoPassUpdate
+End Sub

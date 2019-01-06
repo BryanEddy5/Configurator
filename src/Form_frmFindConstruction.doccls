@@ -1,0 +1,116 @@
+﻿Option Compare Database
+Option Explicit
+
+
+
+Private Sub btnExcelExport_Click()
+
+On Error GoTo ErrorHandler
+
+DoCmd.OutputTo acOutputForm, "frmFindConstruction", acFormatXLS, Environ("USERPROFILE") & "\Desktop\ItemConstructionResults" & Format(Now, "yyyyMMddhhmmss") & ".xls"
+Beep
+MsgBox "File has successfully been exported to Desktop"
+
+ErrorExit:
+Exit Sub
+
+ErrorHandler:
+MsgBox Err.Number & " " & Err.Description
+Resume ErrorExit
+End Sub
+
+Private Sub btnFiberClose_Click()
+DoCmd.Close acForm, Me.Name
+
+End Sub
+
+Private Sub btnFind_Click()
+Call OpenAClient(2, Me.txConstructionID, Nz(Me.txLocation, 2))
+End Sub
+
+Private Sub btnRemoveFilter_Click()
+Me.ItemNoSearch.Value = Null
+Me.ItemNoSearch.Requery
+Me.cbFamilyDesc = Null
+Me.cbJacketDesc = Null
+Me.cbJacketDesc.Requery
+Me.Filter = ""
+Me.OrderBy = ""
+Me.FilterOn = False
+Me.OrderByOn = False
+Me.cbFamilyDesc = Null
+
+'Call Refresh_Click
+
+
+End Sub
+
+
+
+
+Private Sub btnSearch_Click()
+Dim strFilter As String
+strFilter = "([Base] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [NominalOD] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [ConstructionDescription] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [DesignCode] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [JacketMaterial] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [StandardOperation] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [BaseID] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [TBType] like """ & Me.ItemNoSearch & "*"")"
+
+If Not IsNull(Me.cbFamilyDesc) Then strFilter = strFilter & " AND [SalesForceDescription] like """ & Me.cbFamilyDesc & "*"""
+If Not IsNull(Me.cbJacketDesc) Then strFilter = strFilter & " AND [JacketDescription_SalesForce]  like """ & Me.cbJacketDesc & "*"""
+
+
+Me.Filter = strFilter
+Me.FilterOn = True
+'Call Refresh_Click
+End Sub
+
+
+
+Private Sub btnSortDescending_Click()
+
+Me.OrderBy = "[ConstructionDescription] DESC"
+Me.OrderByOn = True
+
+'Call Refresh_Click
+
+End Sub
+
+Private Sub cbFamilyDesc_AfterUpdate()
+
+Call btnSearch_Click
+Me.cbJacketDesc = Null
+Me.cbJacketDesc.Requery
+
+End Sub
+
+Private Sub cbJacketDesc_AfterUpdate()
+Call btnSearch_Click
+End Sub
+
+Private Sub Form_Open(Cancel As Integer)
+Me.ItemNoSearch.SetFocus
+End Sub
+
+Private Sub ItemNoSearch_KeyDown(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Me.btnSearch.SetFocus
+        Call btnSearch_Click
+    End If
+
+End Sub
+
+Private Sub Refresh_Click()
+Me.Requery
+'Me.Refresh
+End Sub
+
+Private Sub txBase_DblClick(Cancel As Integer)
+
+Call OpenAClient(FindItem, "base = '" & Me.Base & "'")
+
+
+End Sub

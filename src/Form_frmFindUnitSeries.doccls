@@ -1,0 +1,77 @@
+﻿Option Explicit
+Option Compare Database
+Dim m_unitSeries
+
+
+Friend Property Get UnitSeries() As String
+If IsNull(m_unitSeries) Or m_unitSeries = "" Then
+    m_unitSeries = getUnitSeries
+End If
+UnitSeries = m_unitSeries
+End Property
+
+
+Private Sub btnAdd_Click()
+Me.AllowAdditions = True
+Call btnEdit_Click
+End Sub
+
+Private Sub btnClose_Click()
+On Error GoTo ErrorHandler
+CloseClient (Me.hWnd)
+
+ErrorExit:
+Exit Sub
+
+ErrorHandler:
+DoCmd.Close acForm, Me.Name
+Resume ErrorExit
+End Sub
+
+Private Sub btnDelete_Click()
+Call DeleteARecord
+End Sub
+
+Private Sub btnEdit_Click()
+Dim ctl As control
+For Each ctl In Me.Controls
+    If ctl.ControlType = acTextBox Then
+        If ctl.Locked <> False Then
+            ctl.Locked = False
+        End If
+    End If
+Next ctl
+Me.txItemNo.Locked = True
+End Sub
+
+
+Private Function getUnitSeries() As String
+Dim hold$()
+hold = Split(Me.Filter, "'")
+getUnitSeries = hold(1)
+End Function
+
+
+
+Private Sub btnSave_Click()
+Me.AllowAdditions = False
+Me.Requery
+End Sub
+
+
+
+Private Sub Form_Open(Cancel As Integer)
+Me.AllowAdditions = False
+getUnitSeries
+End Sub
+
+Private Sub Refresh_Click()
+Me.Requery
+Me.Refresh
+End Sub
+
+Private Sub txOracleItem_AfterUpdate()
+If Me.FilterOn = True And UnitSeriesExist(UnitSeries) Then
+    Me.[Unit Color Series] = UnitSeries
+End If
+End Sub

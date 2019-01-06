@@ -1,0 +1,41 @@
+﻿Option Compare Database
+Option Explicit
+
+Private Sub txFinishedGood_KeyDown(KeyCode As Integer, Shift As Integer)
+If KeyCode = 27 Then
+DoCmd.Close acForm, Me.Name
+End If
+End Sub
+
+Private Sub btnClose_Click()
+DoCmd.Close acForm, Me.Name
+End Sub
+
+
+Private Sub btnExcelExport_Click()
+On Error GoTo ErrorHandler
+
+DoCmd.OutputTo acOutputForm, "frmBOMCostExplode", acFormatXLS, Environ("USERPROFILE") & "\Desktop\BOMCostExplode" & Format(Now, "yyyyMMddhhmmss") & ".xls"
+Beep
+MsgBox "File has successfully been exported to Desktop"
+
+
+
+ErrorExit:
+Exit Sub
+
+ErrorHandler:
+If Err.Number = 2302 Then
+    MsgBox "Close the excel spreadsheet and try again", vbCritical
+Else
+    MsgBox Err.Number & " " & Err.Description
+End If
+Resume ErrorExit
+End Sub
+
+Private Sub Form_KeyPress(KeyAscii As Integer)
+If KeyAscii = 27 Then
+DoCmd.Close acForm, Me.Name
+End If
+End Sub
+

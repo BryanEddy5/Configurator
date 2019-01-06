@@ -1,0 +1,82 @@
+﻿Option Compare Database
+Option Explicit
+
+
+
+
+Private Sub CatalogGroupName_Enter()
+
+Call sItemInterfaceDisplay
+End Sub
+
+Private Sub cmdClose_Click()
+DoCmd.Close acForm, Me.Name
+Forms.frmMainMenu.Visible = True
+DoCmd.Close acForm, "frmMainMenu"
+
+End Sub
+
+Private Sub cmdLoad_Click()
+
+DoCmd.OpenQuery "qryCategoryBlanksDelete"
+Me!frmItemInterfaceCategory.Form.Requery
+Me!frmItemInterfaceCategory.Form.Refresh
+
+
+If FieldCompletionCheck = True Then
+    Exit Sub
+End If
+
+
+Dim WSHShell
+Set WSHShell = VBA.CreateObject("WScript.Shell")
+Dim exeName
+Dim statusCode
+Dim theDir
+Dim OldDir
+
+OldDir = WSHShell.CurrentDirectory
+theDir = "C:\Applications\Prod\program_updates"
+WSHShell.CurrentDirectory = theDir
+exeName = "C:\Applications\prod\program_updates\qts_program_update.exe APPS XXX CDI"
+statusCode = WSHShell.Run(exeName, 1, True)
+WSHShell.CurrentDirectory = OldDir
+
+
+End Sub
+
+
+Private Sub Description_Enter()
+Call sItemInterfaceDisplay
+End Sub
+
+Private Sub ItemNumber_Enter()
+Call sItemInterfaceDisplay
+End Sub
+
+Private Sub OrganizationCode_Enter()
+Call sItemInterfaceDisplay
+End Sub
+
+Private Sub PrimaryUOMCode_Enter()
+Call sItemInterfaceDisplay
+End Sub
+
+Private Sub StdLotSize_Enter()
+Call sItemInterfaceDisplay
+End Sub
+
+Private Sub TemplateName_Enter()
+Call sItemInterfaceDisplay
+End Sub
+
+Function FieldCompletionCheck() As Boolean
+If IsNull(Me!frmItemInterfaceRoutingInterface.Form.CompletionSubinventory) = True Then
+    MsgBox "Completion subinventory is missing"
+    FieldCompletionCheck = False
+    Exit Function
+End If
+
+
+
+End Function

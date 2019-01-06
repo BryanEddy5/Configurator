@@ -1,0 +1,158 @@
+﻿Option Compare Database
+Option Explicit
+'Key Preview = Yes
+
+
+Private Sub btnCutSheet_Click()
+
+OpenCutSheet (Me.Oracle)
+End Sub
+
+Private Sub btnFiberClose_Click()
+DoCmd.Close acForm, Me.Name
+End Sub
+
+Private Sub btnFind_Click()
+Call OpenAClient(1, Me.ItemID, Nz(Me.Location, 2))
+End Sub
+
+Private Sub btnRefresh_Click()
+Me.Requery
+End Sub
+
+Private Sub btnRemoveFilter_Click()
+
+Dim strFilter As String
+Me.ItemNoSearch.Value = Null
+Me.ItemNoSearch.Requery
+
+
+Me.Filter = ""
+Me.OrderBy = ""
+Me.FilterOn = False
+Me.OrderByOn = False
+
+Me.cbFamilyDesc = Null
+
+Me.Filter = strFilter
+Me.FilterOn = True
+Me.OrderByOn = True
+
+'Call Refresh_Click
+
+
+End Sub
+
+Private Sub btnRequest_Click()
+
+
+Call RequestCutSheet(Me.Oracle, Me.Base)
+
+
+Call Refresh_Click
+
+ErrorExit:
+Exit Sub
+
+ErrorHandler:
+MsgBox Err.Number & " " & Err.Description
+Resume ErrorExit
+
+End Sub
+
+Private Sub btnSearch_Click()
+Dim strFilter As String
+strFilter = "([ItemNo] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [Oracle] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [Customer] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [base] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [Color] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [FiberCount] like """ & Me.ItemNoSearch & "*"")"
+strFilter = strFilter & " AND  [SalesForceDescription] like """ & Me.cbFamilyDesc & "*"""
+
+
+Me.Filter = strFilter
+Me.FilterOn = True
+''Call Refresh_Click
+End Sub
+
+
+
+Private Sub btnSortDescending_Click()
+
+Me.OrderBy = "[RevDate] DESC"
+Me.OrderByOn = True
+
+'Call Refresh_Click
+
+End Sub
+
+Private Sub cbFamilyDesc_AfterUpdate()
+Call btnSearch_Click
+End Sub
+
+Private Sub btnApproval_Click()
+DoCmd.OpenForm "frmCutSheet_AwaitingApproval"
+End Sub
+Private Sub Form_Open(Cancel As Integer)
+Call UserCheck
+If Application.Version < 15 Then
+    MsgBox "This function is only available in MS Access 2013 or newer", vbCritical
+    DoCmd.Close acForm, Me.Name
+    Exit Sub
+End If
+
+'Call btnSearch_Click
+Call btnRemoveFilter_Click
+If iCutSheetApprover = 1 Or iCutSheetApprover = 2 Then
+    Me.btnApproval.Visible = True
+Else
+    Me.btnApproval.Visible = False
+End If
+
+Select Case Me.txStatus
+    Case ""
+End Select
+
+
+End Sub
+
+Private Sub ItemNoSearch_KeyDown(KeyCode As Integer, Shift As Integer)
+If KeyCode = vbKeyReturn Then
+        Me.btnSearch.SetFocus
+        Call btnSearch_Click
+    End If
+
+End Sub
+
+
+Private Sub Refresh_Click()
+Me.Requery
+'Me.Refresh
+End Sub
+
+
+
+Private Sub Text22_DblClick(Cancel As Integer)
+Call btnFind_Click
+End Sub
+
+Private Sub Text6_DblClick(Cancel As Integer)
+Call btnFind_Click
+End Sub
+
+Private Sub Weight_Click()
+
+
+Dim Weight As Double
+
+Weight = BOM_WeightCalculator(Me.Oracle)
+
+If Weight = 0 Then
+    Exit Sub
+End If
+
+MsgBox Me.Oracle & " weighs " & Weight & " kg/km"
+
+
+End Sub

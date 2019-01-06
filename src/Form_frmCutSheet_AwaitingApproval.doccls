@@ -1,0 +1,168 @@
+﻿Option Explicit
+Option Compare Database
+Dim iApprovedClick As Integer
+Dim currentUser As New clsUser
+
+
+Private Sub btnApprove_Click()
+Dim sEmail As String
+Dim rst As New ADODB.Recordset
+
+On Error GoTo ErrorHandler
+
+
+If iApprovedClick <= 0 Then
+MsgBox "No designs have been selected", vbCritical
+    Exit Sub
+End If
+
+
+If MsgBox("Are you ready to approve these designs?", vbYesNo) = vbNo Then
+   Exit Sub
+End If
+
+Me.txOracle.SetFocus
+Me.Requery
+
+DoCmd.SetWarnings False
+
+
+DoCmd.RunSQL "DELETE FROM tblCutSheet_QueuedForApproval"
+
+DoCmd.OpenQuery "qryCutSheet_QueuedForApproval_LOAD"
+
+
+If iCutSheetApprover = 1 Then
+
+    Call CutSheetApproval("", 4)
+
+ElseIf iCutSheetApprover = 2 Then
+
+    Call CutSheetApproval("", 5)
+
+End If
+
+'sBases = Split(BaseQueuedForApproval, ";") 'Fetch all approved bases and input into a semicolon delimited array
+'For i = 0 To UBound(sBases)
+'    If CutSheet_CheckApproval(sBases(i), sEmail) = True Then 'Fetch Email of requestor and determine if the Technical and Commerical review have been completed
+'        Call CutSheetEmailApproved(sBases(i), sEmail) ' If both reviews have been completed then email the requestor
+'    End If
+'Next i
+
+Set rst = BaseQueuedForApproval
+
+
+Do Until rst.EOF
+    If CutSheet_CheckApproval(rst!Base, sEmail) = True Then 'Fetch Email of requestor and determine if the Technical and Commerical review have been completed
+        Call CutSheetEmailApproved(rst!Base, sEmail, rst!Oracle) ' If both reviews have been completed then email the requestor
+    End If
+    rst.MoveNext
+
+Loop
+
+
+
+BaseQueuedForApproval.Close
+
+Beep
+MsgBox "Approval Complete"
+
+Form_frmFindCutSheet.Requery
+
+Call Form_Open(0)
+
+ErrorExit:
+Exit Sub
+
+ErrorHandler:
+MsgBox Err.Number & " " & Err.Description
+Resume ErrorExit
+
+End Sub
+
+Private Sub btnClose_Click()
+DoCmd.Close acForm, Me.Name
+End Sub
+
+
+
+Private Sub btnCutSheet_Click()
+If IsNull(Me.Oracle) Then
+    Exit Sub
+End If
+
+OpenCutSheet (Me.Oracle)
+End Sub
+
+Private Sub btnFilter_Click()
+
+Dim strFilter As String
+strFilter = "[Oracle] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [Base] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [ItemNo] like """ & Me.ItemNoSearch & "*"""
+
+Me.Filter = strFilter
+Me.FilterOn = True
+Call Refresh_Click
+End Sub
+
+
+
+Private Sub btnFind_Click()
+
+Call OpenAClient(InstanceFormType.ItemOracle, Me.Oracle, 2)
+End Sub
+
+Private Sub btnRemoveFilter_Click()
+Me.ItemNoSearch.Value = Null
+Me.ItemNoSearch.Requery
+Me.Filter = ""
+Me.FilterOn = False
+Call Refresh_Click
+End Sub
+
+Private Sub chApproved_AfterUpdate()
+
+If Me.chApproved = 0 Then
+    iApprovedClick = iApprovedClick - 1
+Else
+    iApprovedClick = iApprovedClick + 1
+End If
+
+End Sub
+
+Private Sub Form_Open(Cancel As Integer)
+Dim strFilter As String
+strFilter = "[Base] like """ & Me.ItemNoSearch & "*"""
+
+Me.Filter = strFilter
+Me.FilterOn = True
+
+DoCmd.SetWarnings False
+
+DoCmd.RunSQL "DELETE FROM tblCutSheetApproval_Local"
+
+If iCutSheetApprover = 1 Then
+    Me.lblApproval.Caption = "Cut Sheet Technical Approval"
+    DoCmd.OpenQuery "qryCutSheetRequested_Tech_LOAD"
+
+ElseIf iCutSheetApprover = 2 Then
+    Me.lblApproval.Caption = "Cut Sheet Commercial Approval"
+    DoCmd.OpenQuery "qryCutSheetRequested_Commerical_LOAD"
+
+End If
+
+Me.Requery
+
+currentUser.Load
+
+Me.ItemNoSearch.SetFocus
+
+
+End Sub
+
+Sub Refresh_Click()
+
+Me.Refresh
+Me.Requery
+End Sub

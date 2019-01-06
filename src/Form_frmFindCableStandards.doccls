@@ -1,0 +1,49 @@
+﻿Option Explicit
+Option Compare Database
+Private ID As Integer
+
+Private Sub btnAdd_Click()
+Me.AllowAdditions = True
+Call btnEdit_Click
+ID = Nz(Me.txBaseID, Me.BaseID)
+End Sub
+
+Private Sub btnClose_Click()
+DoCmd.Close
+End Sub
+
+Private Sub btnDelete_Click()
+Call DeleteARecord
+End Sub
+
+Private Sub btnEdit_Click()
+Dim ctl As control
+For Each ctl In Me.Controls
+    If ctl.ControlType = acComboBox Then
+        If ctl.Locked <> False Then
+            ctl.Locked = False
+        End If
+    End If
+Next ctl
+Me.txBaseID.Locked = True
+ID = Nz(Me.txBaseID, Me.BaseID)
+End Sub
+
+
+Private Sub btnSave_Click()
+Me.AllowAdditions = False
+Me.Requery
+End Sub
+
+Private Sub cbStandard_AfterUpdate()
+Me.txBaseID = ID
+End Sub
+
+Private Sub Form_Open(Cancel As Integer)
+Me.AllowAdditions = False
+End Sub
+
+Private Sub Refresh_Click()
+Me.Requery
+Me.Refresh
+End Sub

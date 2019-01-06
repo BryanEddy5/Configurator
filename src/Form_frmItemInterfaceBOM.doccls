@@ -1,0 +1,7 @@
+﻿Option Explicit
+Option Compare Database
+
+
+Private Sub btnUpdateBOMUsage_Click()
+Call BomUsage
+End Sub

@@ -1,0 +1,65 @@
+﻿Option Explicit
+Option Compare Database
+
+Private Sub btnMils_Click()
+On Error GoTo Error_Handler
+
+DoCmd.OpenForm "frmMilsConversion"
+
+Forms!frmMilsConversion!NominalWall = Round(CDbl(Me!frmCableConstruction.Form!NominalWall.NominalWall) * 39.37, 1)
+Forms!frmMilsConversion!MinAveWall = Round(CDbl(Me!frmCableConstruction.Form!NominalWall.MinAveWall) * 39.37, 1)
+Forms!frmMilsConversion!MinSpotWall = Round(CDbl(Me!frmCableConstruction.Form!NominalWall.MinSpotWall) * 39.37, 1)
+Forms!frmMilsConversion!MaxAveWall = Round(CDbl(Me!frmCableConstruction.Form!NominalWall.MaxAveWall) * 39.37, 1)
+
+Error_Exit:
+Exit Sub
+
+Error_Handler:
+'MsgBox Err.Description & " " & Err.Number
+Resume Error_Exit
+
+End Sub
+
+Private Sub btnAdd_Click()
+Me.AllowAdditions = True
+Call btnEdit_Click
+'ProductID = Nz(Me.Parent!txSetupID)
+End Sub
+
+Private Sub btnConstruction_Click()
+
+Call OpenAClient(3, Me.[Level 1 Product], 1)
+
+End Sub
+
+
+Private Sub btnDeleteRecord_Click()
+Call DeleteARecord
+End Sub
+
+Private Sub btnEdit_Click()
+Dim ctl As control
+For Each ctl In Me.Controls
+    If ctl.ControlType = acTextBox Then
+        If ctl.Locked <> False Then
+            ctl.Locked = False
+        End If
+    End If
+Next ctl
+Me.ProductID.Locked = True
+'ProductID = Nz(Me.Parent!txSetupID)
+End Sub
+
+
+Private Sub btnSave_Click()
+Me.AllowAdditions = False
+Me.Requery
+End Sub
+
+Private Sub Form_Open(Cancel As Integer)
+Me.AllowAdditions = False
+End Sub
+
+Private Sub txBase_AfterUpdate()
+ProductID = Nz(Me.Parent!txSetupID)
+End Sub

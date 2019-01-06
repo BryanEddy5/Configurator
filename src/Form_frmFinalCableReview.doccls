@@ -1,0 +1,60 @@
+﻿Option Explicit
+Option Compare Database
+
+Private Sub btnLoadCable_Click()
+'DoCmd.OpenQuery "qryLOADPremisCableSheath"
+'DoCmd.OpenQuery "qryBasicCableSheethActivate"
+Me.Refresh
+
+DoCmd.OpenQuery "qryLOADBasicCable"
+
+Me.btnViewFam.SetFocus
+Me.btnLoadCable.Enabled = False
+
+
+End Sub
+
+Private Sub Command32_Click()
+DoCmd.OpenQuery "qryBasicSheathFamilyFind", , acReadOnly
+End Sub
+
+Private Sub btnViewFam_Click()
+DoCmd.OpenQuery "qryBasicSheathFamilyFind", , acReadOnly
+
+End Sub
+
+Private Sub cmdDelete_Click()
+On Error GoTo Err_cmdDelete_Click
+
+
+    DoCmd.DoMenuItem acFormBar, acEditMenu, 8, , acMenuVer70
+    DoCmd.DoMenuItem acFormBar, acEditMenu, 6, , acMenuVer70
+
+Exit_cmdDelete_Click:
+    Exit Sub
+
+Err_cmdDelete_Click:
+    MsgBox Err.Description
+    Resume Exit_cmdDelete_Click
+End Sub
+
+Private Sub Form_Load()
+    Me.AllowAdditions = True
+    DoCmd.GoToRecord , , acNewRec
+    Me.AllowAdditions = False
+    Me.btnLoadCable.Enabled = True
+    
+End Sub
+
+Private Sub txOracleItem_AfterUpdate()
+
+'If the Item Request Item Number has changed then the item being inserted into the creation log needs to be updated
+If CreateNewItem.NewItemNumber = Me.txOracleItem.OldValue Then
+
+    CreateNewItem.NewItemNumber = Me.txOracleItem.Value
+
+End If
+
+
+
+End Sub

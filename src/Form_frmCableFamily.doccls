@@ -1,0 +1,132 @@
+﻿Option Compare Database
+Option Explicit
+Public Event Selected(Value As String)
+
+Public Sub btnAdd_Click()
+Me.AllowAdditions = True
+DoCmd.GoToRecord , , acNewRec
+'While Me.CurrentRecord < Me.Recordset.RecordCount
+'
+'    DoCmd.GoToRecord Record:=acNext
+'Wend
+Call btnEdit_Click
+End Sub
+
+
+Private Sub btnAddDocs_Click()
+
+DoCmd.OpenForm "frmCableFamilyDocument"
+End Sub
+
+Private Sub btnDeleteRecord_Click()
+If MsgBox("Are you SURE you want to permantently delete this record?", vbYesNo, "Delete Record") = vbYes Then
+
+    DoCmd.RunSQL "DELETE FROM tblCableFamily where FamilyID = " & Me.FamilyID
+    Me.Requery
+
+End If
+End Sub
+
+Private Sub btnFiberClose_Click()
+DoCmd.Close acForm, Me.Name
+
+End Sub
+
+
+
+Private Sub btnFind_Click()
+    
+    DoCmd.OpenForm "frmFindConstruction", acNormal, , "FamilyID = " & Me.FamilyID, , acWindowNormal
+End Sub
+
+Private Sub btnRemoveFilter_Click()
+Me.ItemNoSearch.Value = Null
+Me.ItemNoSearch.Requery
+Me.Filter = ""
+Me.OrderBy = ""
+Me.FilterOn = False
+Me.OrderByOn = False
+
+'Call Refresh_Click
+
+
+End Sub
+
+Private Sub btnSave_Click()
+
+Me.AllowAdditions = False
+Dim ctl As control
+For Each ctl In Me.Controls
+    If ctl.ControlType = acTextBox Then
+        If ctl.Locked <> True Then
+            ctl.Locked = True
+        End If
+    End If
+Next ctl
+
+Me.ItemNoSearch.Locked = False
+
+End Sub
+
+Private Sub btnSearch_Click()
+Dim strFilter As String
+strFilter = "[FamilyID] like ""*" & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [FamilyDescription] like   ""*" & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [NewProductCode] like  ""*" & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [EngineeringChange] like   ""*" & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [NewProductRelease] like   ""*" & Me.ItemNoSearch & "*"""
+
+Me.Filter = strFilter
+Me.FilterOn = True
+End Sub
+'Call Refresh_Click
+
+
+
+Private Sub btnSortDescending_Click()
+
+Me.OrderBy = "[DateCreated] DESC"
+Me.OrderByOn = True
+
+'Call Refresh_Click
+
+End Sub
+
+Private Sub Form_Open(Cancel As Integer)
+Me.btnSearch.SetFocus
+Me.AllowAdditions = False
+
+
+End Sub
+
+Private Sub ItemNoSearch_KeyDown(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Me.btnSearch.SetFocus
+        Call btnSearch_Click
+    End If
+
+End Sub
+
+Private Sub Refresh_Click()
+Me.Requery
+'Me.Refresh
+End Sub
+Private Sub btnEdit_Click()
+Dim ctl As control
+For Each ctl In Me.Controls
+    If ctl.ControlType = acTextBox Then
+        If ctl.Locked <> False Then
+            ctl.Locked = False
+        End If
+    End If
+Next ctl
+End Sub
+
+Private Sub txFamilyDescription_DblClick(Cancel As Integer)
+
+
+DoCmd.OpenForm "frmCableFamilyDocument"
+
+RaiseEvent Selected(Me.FamilyID)
+
+End Sub

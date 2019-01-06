@@ -1,0 +1,36 @@
+﻿Option Explicit
+Option Compare Database
+
+Private Sub Save___Close_Click()
+On Error GoTo Err_Save___Close_Click
+
+    Dim stDocName As String
+
+    stDocName = "mcrPrintType"
+    DoCmd.RunMacro stDocName
+
+Exit_Save___Close_Click:
+    Exit Sub
+
+Err_Save___Close_Click:
+    MsgBox Err.Description
+    Resume Exit_Save___Close_Click
+    
+End Sub
+
+Private Sub btnfrmUnitSeries_Click()
+DoCmd.OpenForm "frmUnitSeriesExisting"
+
+If IsNull(Me.NewUnit) = True Or Forms!frmUnitSeriesExisting!Existing = -1 Then
+    MsgBox ("Plese create new Unit Series")
+Else
+Forms!frmCreateItem!UnitSeries = Me.NewUnit
+DoCmd.Close acForm, "frmUnitSeries"
+
+End If
+
+DoCmd.Close acForm, "frmUnitSeriesExisting"
+    
+
+
+End Sub

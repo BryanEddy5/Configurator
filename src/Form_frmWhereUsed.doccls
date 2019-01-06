@@ -1,0 +1,23 @@
+﻿Option Compare Database
+Option Explicit
+
+Private Sub Base_KeyDown(KeyCode As Integer, Shift As Integer)
+If KeyCode = 27 Then
+DoCmd.Close acForm, Me.Name
+End If
+End Sub
+
+Private Sub btnClose_Click()
+DoCmd.Close acForm, Me.Name
+End Sub
+
+
+Private Sub btnFind_Click()
+Call OpenAClient(0, Me.AssemblyItemNumber, Nz(Me.CablePasses, 2))
+End Sub
+
+Private Sub Form_KeyPress(KeyAscii As Integer)
+If KeyAscii = 27 Then
+DoCmd.Close acForm, Me.Name
+End If
+End Sub

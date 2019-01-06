@@ -1,0 +1,50 @@
+﻿Option Explicit
+Option Compare Database
+Public Event Selected(Bases As DAO.Recordset)
+
+Private Sub btnClearRecords_Click()
+Me.btnClose.SetFocus
+    If MsgBox("Continuing will delete all image records", vbYesNo, "Delete all image records") = vbYes Then
+        
+        Call ClearRecords
+    End If
+End Sub
+
+Private Sub ClearRecords()
+DoCmd.SetWarnings False
+DoCmd.RunSQL "DELETE FROM " & Me.RecordSource
+Me.Requery
+End Sub
+
+Private Sub btnClose_Click()
+DoCmd.Close acForm, Me.Name
+End Sub
+
+Private Sub btnDeleteRecord_Click()
+On Error GoTo Err_cmdDelete_Click
+
+
+    DoCmd.DoMenuItem acFormBar, acEditMenu, 8, , acMenuVer70
+    DoCmd.DoMenuItem acFormBar, acEditMenu, 6, , acMenuVer70
+
+Exit_cmdDelete_Click:
+    Exit Sub
+
+Err_cmdDelete_Click:
+    MsgBox Err.Description
+    Resume Exit_cmdDelete_Click
+End Sub
+
+Private Sub btnRequest_Click()
+If MsgBox("Are you ready to submit these changes?", vbYesNo) = vbNo Then
+    Exit Sub
+End If
+
+    Me.Refresh
+    Me.Requery
+RaiseEvent Selected(Me.Recordset)
+
+DoCmd.Close acForm, Me.Name
+
+
+End Sub

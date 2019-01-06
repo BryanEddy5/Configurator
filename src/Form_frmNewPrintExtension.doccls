@@ -1,0 +1,6 @@
+﻿Option Explicit
+Option Compare Database
+
+Private Sub cmdNewPrintExtension_Click()
+Call NewPrintExtensionFromBaseContinue
+End Sub

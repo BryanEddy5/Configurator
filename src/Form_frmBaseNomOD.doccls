@@ -1,0 +1,7 @@
+﻿Option Explicit
+Option Compare Database
+
+Private Sub Form_Open(Cancel As Integer)
+Me.move 100000, 100000
+
+End Sub

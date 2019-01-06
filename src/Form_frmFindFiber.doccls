@@ -1,0 +1,74 @@
+﻿Option Compare Database
+Option Explicit
+
+
+Private Sub btnFiberClose_Click()
+DoCmd.Close acForm, Me.Name
+
+End Sub
+
+
+
+Private Sub btnFiberCost_Click()
+DoCmd.OpenQuery "qryUPDATEqryFibersCost"
+End Sub
+
+Private Sub btnRemoveFilter_Click()
+Me.ItemNoSearch.Value = Null
+Me.ItemNoSearch.Requery
+Me.Filter = ""
+Me.OrderBy = ""
+Me.FilterOn = False
+Me.OrderByOn = False
+
+'Call Refresh_Click
+
+
+End Sub
+
+
+
+
+Private Sub btnSearch_Click()
+Dim strFilter As String
+strFilter = "[fiber] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [Description_Oracle] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [OM#] like """ & Me.[ItemNoSearch] & "*"""
+strFilter = strFilter & " OR [SpecialNotes] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [Vendor] like """ & Me.ItemNoSearch & "*"""
+
+Me.Filter = strFilter
+Me.FilterOn = True
+'Call Refresh_Click
+End Sub
+
+
+
+Private Sub btnSortDescending_Click()
+
+Me.OrderBy = "[RevDate] DESC"
+Me.OrderByOn = True
+
+'Call Refresh_Click
+
+End Sub
+
+
+
+Private Sub Form_Load()
+Call UserCheck
+End Sub
+
+
+
+Private Sub ItemNoSearch_KeyDown(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Me.btnSearch.SetFocus
+        Call btnSearch_Click
+    End If
+End Sub
+
+Private Sub Refresh_Click()
+Me.Requery
+'Me.Refresh
+End Sub

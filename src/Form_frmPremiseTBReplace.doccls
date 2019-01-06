@@ -1,0 +1,55 @@
+﻿Option Explicit
+Option Compare Database
+
+Private Sub FiberSelection_AfterUpdate()
+
+On Error GoTo Error_Handler
+
+Select Case Me.FiberSelection
+    Case "Fiber1"
+        Me.FiberType = [Forms]![frmItemInterface]![frmPremiseItemDetails].[Form]![FiberType1]
+    Case "Fiber2"
+        Me.FiberType = [Forms]![frmItemInterface]![frmPremiseItemDetails].[Form]![FiberType2]
+    Case "Fiber3"
+        Me.FiberType = [Forms]![frmItemInterface]![frmPremiseItemDetails].[Form]![FiberType3]
+End Select
+
+Me.Requery
+
+Me.Refresh
+Me.cboBaseSelect = Null
+Me.cboBaseSelect.Requery
+Me.cboBaseSelect = Me.cboBaseSelect.ItemData(0)
+
+DoCmd.RunMacro "mcrRequery"
+
+Error_Exit:
+Exit Sub
+
+Error_Handler:
+MsgBox Err.Description & " " & Err.Number
+Resume Error_Exit
+
+End Sub
+
+Private Sub Form_Load()
+
+
+
+
+Me.FiberSelection = Me.FiberSelection.ItemData(0)
+
+
+If Forms!frmItemInterface!frmItemInterfaceBOM.Form!ComponentItemNumber Like "pt*" Then
+    Me.RecordSource = "qryPremiseTBReplaceTB"
+    Me.cboBaseSelect.rowSource = "qryPremiseTBReplaceBaseTB"
+ElseIf Forms!frmItemInterface!frmItemInterfaceBOM.Form!ComponentItemNumber Like "rbn*" Or Forms!frmItemInterface!frmItemInterfaceBOM.Form!ComponentItemNumber Like "swr*" Then
+    Me.RecordSource = "qryPremiseTBReplaceRibbon"
+    Me.cboBaseSelect.rowSource = "qryPremiseTBReplaceBaseRibbon"
+End If
+
+Call FiberSelection_AfterUpdate
+
+
+
+End Sub

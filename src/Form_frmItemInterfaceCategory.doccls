@@ -1,0 +1,39 @@
+﻿Option Explicit
+Option Compare Database
+
+Private Sub CategoryName_AfterUpdate()
+Me.CategoryName.Requery
+End Sub
+
+
+
+Private Sub CategoryName_GotFocus()
+Me.CategoryName.Requery
+End Sub
+
+Private Sub cmdDelete_Click()
+
+If Me.CategorySetName <> "Product Class" Then
+    DeleteARecord
+End If
+
+    
+
+End Sub
+
+Private Sub Command29_Click()
+On Error GoTo Err_Command29_Click
+
+    Dim stDocName As String
+
+    stDocName = "qryItemCategoryInterface"
+    DoCmd.OpenQuery stDocName, acNormal, acEdit
+
+Exit_Command29_Click:
+    Exit Sub
+
+Err_Command29_Click:
+    MsgBox Err.Description
+    Resume Exit_Command29_Click
+    
+End Sub

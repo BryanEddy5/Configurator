@@ -1,0 +1,101 @@
+﻿Option Compare Database
+Option Explicit
+Private WithEvents m_frm As Form_frmCutSheet_ImageGroup
+Private WithEvents m_builder As cListViewBuilder
+Public Event CurrentSelection(Value As Integer)
+Private m_selectedValue%
+Private WithEvents m_lvw As MSComctlLib.Listview
+Private WithEvents m_frmAddBase As Form_frmCableImagesAddBaseToExistingGroup
+
+
+
+
+Private Sub btnAddBase_Click()
+Set m_frmAddBase = New Form_frmCableImagesAddBaseToExistingGroup
+
+m_frmAddBase.Visible = True
+
+'DoCmd.OpenForm "frmCableImagesAddBaseToExistingGroup"
+End Sub
+
+Private Sub btnAddImages_Click()
+DoCmd.OpenForm "frmAddNewCableImages", acNormal
+End Sub
+
+Private Sub btnClose_Click()
+DoCmd.Close acForm, Me.Name
+End Sub
+
+
+Private Sub btnRefresh_Click()
+Me.Requery
+Me.Refresh
+End Sub
+
+Private Sub Form_Load()
+Dim SQL$
+
+SQL = "SELECT Base,SalesForceDescription, ImageGroupID FROM vConstructionSearch "
+
+Me.sfCutSheetCableImages.Form.FormHeader.Visible = False
+Set m_frm = Form_frmCutSheet_ImageGroup
+    
+       'get a new instance by calling GetListviewBuilder
+Set m_builder = New cListViewBuilder
+       'run the load the method of the object...
+       '...pass in a reference to the Listview control...
+       '... and a SQL statement.
+    With m_builder
+        .Load Me.ListView0, SQL, "1;2;.001"
+        '.Rebuild
+    End With
+
+
+
+End Sub
+
+
+
+Private Sub ListView0_DblClick()
+
+
+
+    Call OpenAClient(InstanceFormType.ConstBase, Me.Value, 2)
+
+End Sub
+
+Friend Property Get Value() As Variant
+   If Listview.SelectedItem Is Nothing Then
+      Value = Null
+   Else
+      Value = Listview.SelectedItem.Text
+   End If
+End Property
+Private Sub m_frm_CurrentSelection(Value As Integer)
+'Raise it for subforms to get
+RaiseEvent CurrentSelection(Value)
+m_selectedValue = Value
+Call BuildListView
+End Sub
+
+Private Sub BuildListView()
+       Dim where
+                               '& " ORDER BY SalesForceDescription"
+       'call the rebuild method
+       'm_builder.Rebuild where
+       where = "ImageGroupID = " & m_selectedValue
+       m_builder.Rebuild where
+
+End Sub
+
+
+Friend Property Get Listview() As MSComctlLib.Listview
+   If m_lvw Is Nothing Then Set m_lvw = Me.ListView0.Object
+   Set Listview = m_lvw
+End Property
+
+Private Sub m_frmAddBase_Selected(Bases As DAO.Recordset)
+If AddImageToBase(Bases, m_selectedValue) = True Then MsgBox "Load successful"
+
+
+End Sub

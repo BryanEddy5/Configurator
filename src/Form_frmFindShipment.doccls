@@ -1,0 +1,142 @@
+﻿Option Compare Database
+Option Explicit
+'Key Preview = Yes
+
+
+
+
+
+Private Sub btnExcelExport_Click()
+
+
+On Error GoTo ErrorHandler
+
+DoCmd.OutputTo acOutputForm, "frmFindItem", acFormatXLS, Environ("USERPROFILE") & "\Desktop\Shipment_Search_Results.xls"
+Beep
+MsgBox "File has successfully been exported to Desktop"
+
+
+
+ErrorExit:
+Exit Sub
+
+ErrorHandler:
+MsgBox Err.Number & " " & Err.Description
+Resume ErrorExit
+End Sub
+
+Private Sub btnClose_Click()
+DoCmd.Close acForm, Me.Name
+
+End Sub
+
+Private Sub btnFind_Click()
+Call OpenAClient(0, Me.ITEM_NUMBER, Nz(Me.CablePasses, 2))
+End Sub
+
+Private Sub btnRemoveFilter_Click()
+
+Me.ItemNoSearch.Value = Null
+Me.ItemNoSearch.Requery
+
+'If Me.tglShowObsoleteItems <> 0 Then
+Me.Filter = ""
+Me.FilterOn = False
+'Else
+'strFilter = " OracleStatus <> 'Obsolete' AND OracleStatus <> 'Discontd'"
+'End If
+
+'Me.filter = strFilter
+'Me.FilterOn = True
+'Me.OrderByOn = True
+
+'Call Refresh_Click
+
+End Sub
+
+
+
+
+
+Private Sub btnSearch_Click()
+
+
+
+Dim strFilter As String
+strFilter = "[ITEM_NUMBER] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [ItemNo] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [Bill_To_Name] like """ & Me.ItemNoSearch & "*"""
+'strFilter = strFilter & " OR [Fiber] like """ & Me.ItemNoSearch & "*"""
+'strFilter = strFilter & " OR [Fiber2] like """ & Me.ItemNoSearch & "*"""
+'strFilter = strFilter & " OR [JacketMaterial] like """ & Me.ItemNoSearch & "*"""
+'strFilter = strFilter & " OR [StandardOperation] like """ & Me.ItemNoSearch & "*"""
+'strFilter = strFilter & " OR [base] like """ & Me.ItemNoSearch & "*"""
+'strFilter = strFilter & " OR [Color] like """ & Me.ItemNoSearch & "*"""
+'strFilter = strFilter & " OR [PID] like """ & Me.ItemNoSearch & "*"""
+
+'If Me.tglShowObsoleteItems <> 0 Then
+'Else
+'strFilter = strFilter & " AND [OracleStatus] = ""active"""
+'End If
+
+
+
+Me.Filter = strFilter
+Me.FilterOn = True
+'Call Refresh_Click
+End Sub
+
+
+
+
+
+Private Sub btnSortDescending_Click()
+
+Me.OrderBy = "[CreationDate] DESC"
+Me.OrderByOn = True
+
+'Call Refresh_Click
+
+End Sub
+
+
+Private Sub cbFamilyDesc_AfterUpdate()
+Call btnSearch_Click
+End Sub
+
+Private Sub Form_Load()
+'Call btnSearch_Click
+End Sub
+
+Private Sub Form_Open(Cancel As Integer)
+Call btnSearch_Click
+
+If sUser = 1 Then
+btnCutSheet.Visible = True
+Else
+btnCutSheet.Visible = False
+End If
+    
+End Sub
+
+Private Sub ItemNoSearch_KeyDown(KeyCode As Integer, Shift As Integer)
+If KeyCode = vbKeyReturn Then
+        Me.btnSearch.SetFocus
+        Call btnSearch_Click
+    End If
+
+End Sub
+
+
+Private Sub Refresh_Click()
+Me.Requery
+'Me.Refresh
+End Sub
+
+Private Sub tglShowObsoleteItems_Click()
+
+Call btnSearch_Click
+
+End Sub
+
+

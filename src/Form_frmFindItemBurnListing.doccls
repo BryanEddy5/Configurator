@@ -1,0 +1,45 @@
+﻿Option Explicit
+Option Compare Database
+
+
+Private Sub btnFiberClose_Click()
+DoCmd.Close acForm, "frmFindItemSubunits"
+End Sub
+
+Private Sub btnFind_Click()
+DoCmd.OpenForm "frmSinglePassCable", acNormal, , "[New Oracle Part #] ='" & Me.[New Oracle Part #] & "'", acFormEdit
+End Sub
+
+Private Sub btnClose_Click()
+DoCmd.Close acForm, "frmFindItemBurnListing"
+End Sub
+
+
+Private Sub btnViewListing_Click()
+
+FindBurnListing Me.ListingCompany, Me.ListingTab
+
+  
+
+End Sub
+
+Private Sub Form_Open(Cancel As Integer)
+On Error GoTo Error:
+
+
+'Me.Move 0, 0
+If IsNull(Me.Base) Then
+MsgBox ("No Burn Listing"), vbCritical
+DoCmd.Close acForm, "frmFindItemBurnListing"
+End If
+
+Exit Sub
+Error:
+MsgBox ("No Burn Listing"), vbCritical
+DoCmd.Close acForm, "frmFindItemSubunits"
+End Sub
+
+Private Sub Refresh_Click()
+Me.Requery
+Me.Refresh
+End Sub

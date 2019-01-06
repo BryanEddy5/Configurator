@@ -1,0 +1,21 @@
+﻿Option Explicit
+Option Compare Database
+
+Private Sub btnMils_Click()
+On Error GoTo Error_Handler
+
+DoCmd.OpenForm "frmMilsConversion"
+
+Forms!frmMilsConversion!NominalWall = Round(CDbl(Me.NominalWall) * 39.37, 1)
+Forms!frmMilsConversion!MinAveWall = Round(CDbl(Me.MinAveWall) * 39.37, 1)
+Forms!frmMilsConversion!MinSpotWall = Round(CDbl(Me.MinSpotWall) * 39.37, 1)
+Forms!frmMilsConversion!MaxAveWall = Round(CDbl(Me.MaxAveWall) * 39.37, 1)
+
+Error_Exit:
+Exit Sub
+
+Error_Handler:
+'MsgBox Err.Description & " " & Err.Number
+Resume Error_Exit
+
+End Sub

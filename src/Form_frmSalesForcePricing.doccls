@@ -1,0 +1,119 @@
+﻿Option Compare Database
+Option Explicit
+Dim oldMultiplier As Double
+
+
+Private Sub txFinishedGood_KeyDown(KeyCode As Integer, Shift As Integer)
+If KeyCode = 27 Then
+DoCmd.Close acForm, Me.Name
+End If
+End Sub
+
+Private Sub btnClearFields_Click()
+Me.cbProductCategory = Null
+Me.cbProductCategory.Requery
+cbProductCategory_AfterUpdate
+Form_Load
+End Sub
+
+Private Sub btnClose_Click()
+DoCmd.Close acForm, Me.Name
+End Sub
+
+
+Private Sub btnExcelExport_Click()
+On Error GoTo ErrorHandler
+
+DoCmd.OutputTo acOutputForm, "frmBOMCostExplode", acFormatXLS, Environ("USERPROFILE") & "\Desktop\SalesForcePricing.xls"
+Beep
+MsgBox "File has successfully been exported to Desktop"
+
+
+
+ErrorExit:
+Exit Sub
+
+ErrorHandler:
+If Err.Number = 2302 Then
+    MsgBox "Close the excel spreadsheet and try again", vbCritical
+Else
+    MsgBox Err.Number & " " & Err.Description
+End If
+Resume ErrorExit
+End Sub
+
+Private Sub btnSubmit_Click()
+If IsNull(Me.cbBase) Then
+    Exit Sub
+End If
+
+GetSalesForcePricing (Me.cbBase)
+Me.Requery
+End Sub
+
+Private Sub btnUpdatePricing_Click()
+DoCmd.SetWarnings False
+
+Me.btnUpdatePricing.SetFocus
+Me.Refresh
+DoCmd.OpenQuery "qrySalesForceUpdatePricingMultiplier"
+DoCmd.OpenQuery "qrySalesForceUpdatePricingContribution"
+DoCmd.OpenQuery "qrySalesForceUpdatePricingArmorCostAdder"
+Call btnSubmit_Click
+
+End Sub
+
+Private Sub cbBase_AfterUpdate()
+btnSubmit_Click
+End Sub
+
+Private Sub cbFamilyDesc_AfterUpdate()
+Me.cbBase = Null
+Me.cbBase.Requery
+End Sub
+
+Private Sub cbProductCategory_AfterUpdate()
+Me.cbFamilyDesc = Null
+Me.cbBase = Null
+Me.cbFamilyDesc.Requery
+Me.cbBase.Requery
+
+End Sub
+
+Private Sub Form_KeyPress(KeyAscii As Integer)
+If KeyAscii = 27 Then
+DoCmd.Close acForm, Me.Name
+End If
+End Sub
+
+
+Private Sub Form_Load()
+DoCmd.SetWarnings False
+DoCmd.RunSQL "DELETE FROM tblSalesForce_Catalog_Pricing"
+Me.Requery
+End Sub
+
+
+
+Private Sub txArmorCostAdder_AfterUpdate()
+DoCmd.SetWarnings False
+Me.Refresh
+DoCmd.RunSQL "UPDATE tblSalesForce_Catalog_Pricing SET ArmorCostAdder = " & Me.txArmorCostAdder
+End Sub
+
+Private Sub txContribution_AfterUpdate()
+DoCmd.SetWarnings False
+Me.Refresh
+DoCmd.RunSQL "UPDATE tblSalesForce_Catalog_Pricing SET Contribution = " & Me.Contribution
+End Sub
+
+Private Sub txMultiplier_AfterUpdate()
+If Me.Multiplier >= 1 Then
+    Me.Multiplier = oldMultiplier
+End If
+
+End Sub
+
+Private Sub txMultiplier_Dirty(Cancel As Integer)
+oldMultiplier = Me.Multiplier
+End Sub

@@ -1,0 +1,64 @@
+﻿Option Explicit
+
+
+Private Sub btnClose_Click()
+
+DoCmd.Close acForm, Me.Name
+
+
+End Sub
+
+Private Sub btnLoad_Click()
+
+On Error GoTo Error_Handler
+DoCmd.SetWarnings False
+Dim control
+
+For Each control In Me.Controls
+    If control.ControlType = acSubform Then
+        control.Requery
+    End If
+Next
+
+
+
+DoCmd.OpenQuery "qryLOADBasicProductConstruction"
+DoCmd.OpenQuery "qryLOADPremisUnitSeries"
+DoCmd.OpenQuery "qryLOADBasicCableHold_New"
+Me.btnClose.SetFocus
+Me.btnLoad.Enabled = False
+DoCmd.SetWarnings True
+
+
+
+Call CreateNewItem.InsertRequestToLog
+
+Beep
+MsgBox "Load complete"
+
+Call Form_Close
+
+Call btnClose_Click
+
+Error_Exit:
+Exit Sub
+
+Error_Handler:
+DoCmd.SetWarnings False
+MsgBox (Err.Description & " " & Err.Number)
+Resume Error_Exit
+
+
+
+End Sub
+
+Private Sub Form_Close()
+If CurrentProject.AllForms("frmCreateItem").IsLoaded Then
+Call Forms("frmCreateItem").btnClose_Click
+End If
+End Sub
+
+Private Sub Form_GotFocus()
+Me.Refresh
+
+End Sub

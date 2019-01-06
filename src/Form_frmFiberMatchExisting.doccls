@@ -1,0 +1,371 @@
+﻿Option Explicit
+Option Compare Database
+Dim nonDefaultCore As Boolean
+Dim SubColor As String, JacketColor As String
+
+
+
+
+Private Sub Armor_Click()
+
+On Error GoTo Error_Handler:
+
+
+'Creating armored item from existing cable
+
+    If Me.Oracle Like "*ia*" And Not Forms!frmCreateItem!ItemNo Like "*aia*" Then
+    
+    
+        MsgBox ("The print indicators in the design code do not match.")
+   
+    Exit Sub
+    
+    End If
+    
+    If Mid(Me.[Item No], 9, 1) = Mid(Forms!frmCreateItem!ItemNo, 9, 1) Then
+    
+    
+    
+       
+        'Forms!frmCreateItem!ColorChip = Me.ColorChip
+    
+        DoCmd.OpenForm "frmArmorMatch"
+        Forms!frmCreateItem!ArmorNo = Forms!frmArmorMatch!ArmorNo
+        Forms!frmCreateItem!Base = Forms!frmArmorMatch!OracleBase
+        Forms!frmCreateItem!ArmorCoreOD = Forms!frmArmorMatch!NomOD
+        Forms!frmCreateItem!NomOD = Forms!frmArmorMatch!MaxJacketOD
+        
+        If Me.Base = "GQ012-3.0A" Then
+            Forms!frmCreateItem!ArmorNo = 1
+            Forms!frmCreateItem!Base = "IA01-AP PVC"
+        End If
+        
+        
+        If Me.Customer Like "*afl st*" Then
+        
+            Forms!frmCreateItem!PrintType = 1
+            Forms!frmCreateItem!Customer = Me.Customer
+        
+        ElseIf Me.Customer Like "*afl gen*" Then
+            Forms!frmCreateItem!PrintType = 3
+            Forms!frmCreateItem!Customer = Me.Customer
+            If IsNull(Forms!frmCreateItem!PID) = False Then
+                Forms!frmCreateItem!PID = Me.PID
+            End If
+            
+        ElseIf Me.Customer Like "*unprint*" Then
+            Forms!frmCreateItem!PrintType = 0
+            Forms!frmCreateItem!Customer = Me.Customer
+            
+        Else
+            Forms!frmCreateItem!PrintType = 2
+            Forms!frmCreateItem!Customer = Me.Customer
+            
+        End If
+        
+        'Mixed Fiber
+        If Forms!frmCreateItem!MixedFiber = 1 Then
+            Forms!frmCreateItem!FiberType2 = Me.Fiber2
+            Forms!frmCreateItem!Fiber2 = Me.Fiber2
+            Forms!frmCreateItem!Fiber2.Enabled = False
+            
+            DoCmd.OpenForm "frmFiberMode2"
+    
+            Forms!frmCreateItem!OM2 = Forms!frmFiberMode2![OM#]
+            Forms!frmCreateItem!BIF2 = Forms!frmFiberMode2!BIF
+        
+            DoCmd.Close acForm, "frmFiberMode2"
+            
+            
+        End If
+        
+        'if core selected is not a default (matching jacket color) then don't update the oracle item number
+        If nonDefaultCore = True Then
+            Forms!frmCreateItem![NewOracle#] = Forms!frmCreateItem![NewOracle#] & "IA"
+        Else
+            Forms!frmCreateItem![NewOracle#] = Me.Oracle & "IA"
+             Forms!frmCreateItem!Color = Me.Color
+        End If
+        Forms!frmCreateItem!Armor = -1
+        Forms!frmCreateItem!Fiber1 = Me.Fiber
+        Forms!frmCreateItem!Fiber = Me.Fiber
+        Forms!frmCreateItem!Fiber1.Enabled = False
+        Forms!frmCreateItem![Exists].Value = 0
+        Forms!frmCreateItem!btnUnitSeries.Visible = False
+        
+        Forms!frmCreateItem!Color.SetFocus
+        Forms!frmCreateItem!Base.Enabled = False
+        Forms!frmCreateItem!Jacket.Enabled = False
+        Forms!frmCreateItem!Color.Enabled = False
+        
+        DoCmd.OpenForm "frmFiberMode"
+    
+        Forms!frmCreateItem!OM = Forms!frmFiberMode![OM#]
+        Forms!frmCreateItem!BIF = Forms!frmFiberMode!BIF
+        
+        'DoCmd.OpenForm "frmFiberMatchingExistingPrintLine_1_2"
+        
+        If Mid(Me.[Item No], 9, 1) = 1 Then
+            Forms("frmCreateItem").Fiber1_AfterUpdate
+        End If
+        'Else
+            Forms!frmCreateItem!PrintLine2 = Me.PrintLine2
+            Forms!frmCreateItem!PrintLine3 = Me.PrintLine3
+            DoCmd.OpenForm "frmFiberMode"
+            Forms!frmCreateItem!OM = Forms!frmFiberMode![OM#]
+            Forms!frmCreateItem!BIF = Forms!frmFiberMode!BIF
+            DoCmd.Close acForm, "frmFiberMode"
+        'Else
+            Forms("frmCreateItem").ListingAutoFill
+        'End If
+        
+        If IsNull(Forms!frmCreateItem!PrintLine3) = False Then
+            Forms!frmCreateItem!PrintLine3 = Replace(Me.PrintLine3, "OFN", "OFC")
+        End If
+        
+        
+        Forms!frmCreateItem!PrintLine1 = Me.PrintLine1
+        Forms!frmCreateItem!PrintLine4 = Me.PrintLine4
+        
+        
+        DoCmd.Close acForm, "frmArmorMatch"
+        'DoCmd.Close acForm, "frmFiberMatchingExistingPrintLine_1_2"
+        DoCmd.Close acForm, "frmFiberMatchExisting"
+        
+        Forms!frmCreateItem!cbSubunit.Enabled = False
+        Forms!frmCreateItem!Color.Requery
+        Forms!frmCreateItem!Color = Forms!frmCreateItem!Color.ItemData(1)
+        Call Forms("frmCreateItem").PrintType_AfterUpdate
+        
+        Call Forms("frmCreateItem").ListingType_AfterUpdate
+        'Call Forms("frmCreateItem").ListingUpdate
+        
+    End If
+ 
+
+
+
+
+Error_Exit:
+Exit Sub
+
+Error_Handler:
+If Err.Number = 2113 Then
+    MsgBox "Ensure the armor suffix is correct." & vbCrLf & "Example: -AIAE is not a correct armor suffix", vbCritical
+Else
+    MsgBox (Err.Description & " " & Err.Number)
+End If
+
+If CurrentProject.AllForms("frmArmorMatch").IsLoaded Then
+    DoCmd.Close acForm, "frmArmorMatch"
+End If
+Resume Error_Exit:
+
+End Sub
+
+Private Sub btnClose_Click()
+DoCmd.Close acForm, Me.Name
+'Call Forms("frmCreateItem").btnClose_Click
+End Sub
+
+Private Sub btnFiberClose_Click()
+
+    
+    Forms!frmCreateItem![Exists].Value = 0
+    DoCmd.Close acForm, Me.Name
+    
+If Forms!frmCreateItem!ItemNo Like "*ia*" Then
+    MsgBox "No active core was found", vbCritical
+    DoCmd.Close acForm, "frmCreateItem"
+    Forms!frmMainMenu.Visible = True
+Else
+Call Forms("frmCreateItem").CreateItem
+End If
+
+
+End Sub
+
+Private Sub btnFind_Click()
+
+
+Call OpenAClient(0, Me.Oracle, Nz(Me.Location, 2))
+
+
+End Sub
+
+Private Sub FilterForSubunitJacketColor()
+    Dim Prefix As String
+    Dim tightBuffer As String
+    tightBuffer = Mid(Forms!frmMainMenu!ItemNo, 12, 1)
+    Prefix = Left(Forms!frmMainMenu!ItemNo, 9)
+    nonDefaultCore = True
+    
+    Me.Filter = "left([Item No],12) like '" & Prefix & SubColor & "?" & tightBuffer & "' AND [Oracle] NOT LIKE '*-??IA'"
+    Me.FilterOn = True
+    Me.Requery
+    
+    If Not IsNull(Me.Oracle) Then
+        Beep
+        MsgBox "Core item found where core jacket matches new item's subunit color"
+    End If
+End Sub
+
+Private Sub btnSelect_Click()
+Dim strOracle As String
+
+strOracle = Forms!frmCreateItem![NewOracle#]
+
+DoCmd.SetWarnings False
+
+If Not Me.Oracle Like "*ia*" And Not Forms!frmCreateItem!ItemNo Like "*aia*" Then
+    
+    DoCmd.OpenForm "frmExistingNextOracle"
+    
+    If Forms!frmCreateItem!ItemNo Like "*BOX*" Then
+        
+            If Mid(Forms!frmCreateItem!ItemNo, 9, 1) <> "2" Then
+                Forms!frmCreateItem![NewOracle#] = Left(Me.Oracle, 8) & Mid(strOracle, 9, Len(strOracle) - 8)
+            ElseIf Mid(Forms!frmCreateItem!ItemNo, 9, 1) = "2" Then
+                If Mid(Forms!frmExistingNextOracle!Oracle, 9, 1) = "0" Then
+                    Forms!frmCreateItem![NewOracle#] = Left(Forms!frmExistingNextOracle!Oracle, 8) & "10" & Mid(strOracle, 11, Len(strOracle) - 8)
+                Else
+                    Forms!frmCreateItem![NewOracle#] = Left(Forms!frmExistingNextOracle!Oracle, 8) & Mid(Forms!frmExistingNextOracle!Oracle, 9, 2) + 1 & Mid(strOracle, 11, Len(strOracle) - 8)
+                End If
+            End If
+    Else
+    
+        If Mid(Forms!frmCreateItem!ItemNo, 9, 1) = 2 Or Forms!frmCreateItem!PrintType = 2 Then
+            If Mid(Forms!frmExistingNextOracle!Oracle, 9, 1) = "0" Then
+                Forms!frmCreateItem![NewOracle#] = Left(Forms!frmExistingNextOracle!Oracle, 8) & "10"
+            Else
+                Forms!frmCreateItem![NewOracle#] = Left(Forms!frmExistingNextOracle!Oracle, 8) & Mid(Forms!frmExistingNextOracle!Oracle, 9, 2) + 1
+            End If
+        Else
+            Forms!frmCreateItem![NewOracle#] = Left(Forms!frmExistingNextOracle!Oracle, 8) & Right(Forms!frmCreateItem![NewOracle#], 2)
+        
+        
+        End If
+    End If
+    
+    Forms!frmCreateItem!UnitSeries = Me.[Unit Series]
+
+    
+
+    
+    DoCmd.Close acForm, "frmExistingNextOracle"
+    Forms!frmCreateItem!Exists = -1
+    
+
+    
+    DoCmd.Close acForm, "frmFiberMatchExisting"
+    Call Forms("frmCreateItem").CreateItem
+
+Else
+
+End If
+
+DoCmd.SetWarnings True
+
+
+
+
+End Sub
+
+
+
+
+Private Sub Form_Load()
+
+SubColor = Mid(Forms!frmMainMenu!ItemNo, 11, 1)
+JacketColor = Mid(Forms!frmMainMenu!ItemNo, 10, 1)
+'Me.RecordSource = "qryMatchFibertoExisting"
+
+If sUser = 1 Then
+Me.btnFiberClose.Visible = True
+Else
+Me.btnFiberClose.Visible = False
+End If
+
+Me.move 0, 0
+    If Forms!frmCreateItem!ItemNo Like "*aia*" Then
+        Me.btnSelect.Visible = False
+        Me.Armor.Visible = True
+        Me.btnClose.Visible = False
+        Me.btnFiberClose.Caption = "Close"
+    Else
+        Me.btnSelect.Visible = True
+        Me.Armor.Visible = False
+        Me.btnFiberClose.Visible = True
+        Me.btnClose.Visible = True
+        Me.btnFiberClose.Caption = "Create New Parent"
+        
+        
+    End If
+
+If Forms!frmCreateItem!Armor = -1 Then
+
+        Call Forms("frmMainMenu").FiberExt
+       
+        
+    
+    
+    If Forms!frmCreateItem!MixedFiber <> 1 Then
+        
+        
+        Select Case Forms!frmCreateItem!FiberExt
+        Case 1
+            Me.RecordSource = "qryMatchFibertoExistingExtension"
+        Case 2
+            Me.RecordSource = "qryMatchFibertoExistingBIF"
+        Case 3
+            Me.RecordSource = "qryMatchFibertoExistingITU"
+        Case Else
+            Me.RecordSource = "qryMatchFibertoExisting"
+        End Select
+    Else
+        
+        Select Case Forms!frmCreateItem!FiberExt
+            
+        End Select
+    End If
+    Me.Filter = "left([Item No],12) = '" & Left(Forms!frmMainMenu!ItemNo, 12) & "'" ' AND Oracle NOT LIKE '%-??IA'"
+    Me.FilterOn = True
+    Me.Requery
+
+End If
+
+
+
+'If Forms!frmCreateItem![NewOracle#] Like "pt*" Then
+'    Me.RecordSource = "qryMatchFibertoExistingTightBuffers"
+'End If
+
+
+Me.ItemNo = Forms!frmCreateItem!ItemNo
+
+If IsNull(Me.Oracle) = True Then
+    
+    If Forms!frmCreateItem!ItemNo Like "l*" Then
+        Exit Sub
+    ElseIf Forms!frmCreateItem!Armor <> -1 Then
+        Call btnFiberClose_Click
+    ElseIf JacketColor <> SubColor Then
+    Call FilterForSubunitJacketColor
+        If IsNull(Me.Oracle) = True Then
+            Call btnFiberClose_Click
+        End If
+    Else
+        Call btnFiberClose_Click
+    End If
+End If
+
+
+End Sub
+
+
+
+
+
+
+
+

@@ -1,0 +1,56 @@
+﻿Option Compare Database
+Option Explicit
+
+
+Private Sub Detail_Format(Cancel As Integer, FormatCount As Integer)
+
+'   concatenate Table-level stuff
+Static currTable$, tabInfo$
+    If currTable <> Nz(Me![TableName]) Then
+        currTable = Nz(Me![TableName])
+        tabInfo = ""
+        End If
+    If Left$(currTable, 10) = " Relation:" Then
+        Me!FieldType.Visible = False
+        Me!FieldSize.Visible = False
+        Me!FieldName.Width = 7.741 * fig_TwipsPerCm
+        Else
+        Me!FieldType.Visible = True
+        Me!FieldSize.Visible = True
+        Me!FieldName.Width = 4.646 * fig_TwipsPerCm
+        End If
+    If (Left$(Me![FieldName], 5) = "Prop ") Or _
+       (Left$(Me![FieldName], 6) = "Index ") Then
+        tabInfo = tabInfo & Me![FieldName] & "  " & Me![FieldPurpose] & vbCrLf
+        Me.NextRecord = True
+        Me.MoveLayout = False
+        Me.PrintSection = False
+        Else
+        Me!TableInfo = tabInfo
+        tabInfo = ""
+        End If
+    End Sub
+
+Private Sub Report_Open(Cancel As Integer)
+    
+    Dim col_oa As Collection
+    Dim SQL$, tbl$
+    Dim schema_tableName$, schema_workDbName$, schema_DbName$
+    
+    Set col_oa = glb_coll(1)
+    glb_coll.Remove 1
+    schema_tableName$ = col_oa(1)
+    schema_workDbName$ = col_oa(2)
+    schema_DbName$ = col_oa(3)
+    Set col_oa = Nothing
+    tbl$ = "[" & schema_tableName$ & "]"
+    SQL$ = ""
+    SQL$ = SQL$ & " SELECT " & tbl$ & ".* "
+    SQL$ = SQL$ & " FROM " & tbl$
+    If schema_workDbName$ <> "" Then
+        SQL$ = SQL$ & " IN """ & schema_workDbName$ & """"
+        End If
+    Me.RecordSource = SQL$
+    
+    Me![DBName_lab].Caption = schema_DbName$
+    End Sub

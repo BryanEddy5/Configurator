@@ -1,0 +1,204 @@
+﻿Option Explicit
+Option Compare Database
+
+Private Sub Base_DblClick(Cancel As Integer)
+Call btnConstruction_Click
+End Sub
+
+Private Sub btnBurnListing_Click()
+DoCmd.OpenForm "frmFindItemBurnListing", acNormal, , "base = '" & Me.Base & "'", , acWindowNormal
+End Sub
+
+Private Sub btnCableFamilyDoc_Click()
+
+If IsNull(Me.FamilyID) = True Then
+    MsgBox "No NPR documents found", vbCritical
+    Exit Sub
+End If
+
+
+DoCmd.OpenForm "frmCableFamilyViewDocument"
+
+ShowCableFamilyDocuments (Me.FamilyID)
+
+Forms.frmCableFamilyViewDocument.bxDocList.Selected(0) = True
+End Sub
+
+Private Sub btnClose_Click()
+On Error GoTo ErrorHandler
+CloseClient (Me.hWnd)
+
+ErrorExit:
+Exit Sub
+
+ErrorHandler:
+DoCmd.Close acForm, Me.Name
+Resume ErrorExit
+End Sub
+
+Private Sub btnConstruction_Click()
+Call OpenAClient(ConstBase, Me.Base, Nz(Me.frmCableConstruction.Form.CablePasses, 2))
+End Sub
+
+Private Sub btnCustomerSpec_Click()
+
+Dim Customer As String
+Dim CustomerPartNumber As String
+
+On Error GoTo ErrorHandler
+
+Customer = Me.Customer
+CustomerPartNumber = Me.[Customer Part#]
+
+Call ShowCustomerSpec(CustomerPartNumber, Customer)
+
+
+ErrorExit:
+Exit Sub
+
+ErrorHandler:
+DoCmd.Close acForm, "frmCustomerSpecList"
+MsgBox ("No customer spec found"), vbCritical
+Resume ErrorExit:
+
+
+End Sub
+
+Public Sub btnEdit_Click()
+
+UpdateItem (False)
+End Sub
+
+Public Sub UpdateItem(UpdateButton As Boolean)
+Dim ctl As control
+Call UserCheck
+
+If sUser = 1 Or ItemDateCreated(Me.Oracle) = True Or UpdateButton = True Then
+For Each ctl In Me.Controls
+    If ctl.ControlType = acTextBox Or ctl.ControlType = acComboBox Then
+        If ctl.Locked <> False Then
+            ctl.Locked = False
+        End If
+    End If
+Next ctl
+End If
+Me.Revision_History.Locked = True
+Me.Revision_Date.Locked = True
+
+
+
+End Sub
+
+Private Sub btnMils_Click()
+On Error GoTo Error_Handler
+
+DoCmd.OpenForm "frmMilsConversion"
+
+Forms!frmMilsConversion!NominalWall = Round(CDbl(Me!frmCableConstruction.Form!NominalWall.NominalWall) * 39.37, 1)
+Forms!frmMilsConversion!MinAveWall = Round(CDbl(Me!frmCableConstruction.Form!NominalWalle.MinAveWall) * 39.37, 1)
+Forms!frmMilsConversion!MinSpotWall = Round(CDbl(Me!frmCableConstruction.Form!NominalWall.MinSpotWall) * 39.37, 1)
+Forms!frmMilsConversion!MaxAveWall = Round(CDbl(Me!frmCableConstruction.Form!NominalWall.MaxAveWall) * 39.37, 1)
+
+Error_Exit:
+Exit Sub
+
+Error_Handler:
+'MsgBox Err.Description & " " & Err.Number
+Resume Error_Exit
+End Sub
+
+Private Sub btnOraclePush_Click()
+Call OraclePush(Me.Oracle)
+End Sub
+
+Private Sub btnPDF_Click()
+
+
+DoCmd.OpenReport "rptSinglePassCable", acViewPreview, , "Oracle ='" & Me.Oracle & "'", acWindowNormal
+'DoCmd.RunCommand acCmdPreviewTwoPages
+
+End Sub
+
+Private Sub btnPrintPreview_Click()
+DoCmd.OpenForm "frmPrintPreview", acNormal, , "Oracle ='" & Me.Oracle & "'" ', acWindowNormal
+
+
+End Sub
+
+Private Sub btnRemoveFilter_Click()
+On Error GoTo ErrorHandler
+Me.Requery
+
+ErrorExit:
+Exit Sub
+
+ErrorHandler:
+MsgBox Err.Number & " " & Err.Description
+Resume ErrorExit
+End Sub
+
+Private Sub btnUpdate_Click()
+DoCmd.OpenForm "frmRevisionReason"
+Forms!frmRevisionReason!strHwnd = Me.Caption 'CStr(Me.Hwnd)
+
+'Me.Revision_Date = Date
+'Me.Revision_Letter = Int(Me.Revision_Letter) + Int(1)
+
+
+End Sub
+
+Private Sub cbPrintLine4_AfterUpdate()
+
+
+
+Me.NewPrintLine4 = Me.cbPrintLine4.Column(1)
+Me.Print_Spacing = Me.cbPrintLine4.Column(2)
+If IsNull(Me.cbPrintLine4) = True Then
+    Me.Print_Reel_No = 0
+    Me.Print_Item_No = 0
+    Me.Print_Type__base_ = Null
+Else
+    Me.Print_Reel_No = -1
+End If
+
+Me.Requery
+Me.Refresh
+
+End Sub
+
+
+Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
+    If Shift = 2 And KeyCode = vbKeyW Then
+        CloseClient (Me.hWnd)
+    End If
+    
+    If Shift = 2 And KeyCode = vbKeyR Then
+        Me.Reason = Null
+        Me.Active = -1
+    End If
+End Sub
+
+Private Sub Form_Load()
+
+
+Dim ctl As control
+For Each ctl In Me.Controls
+    If ctl.ControlType = acTextBox Or ctl.ControlType = acComboBox Then
+        If ctl.Locked <> True Then
+            ctl.Locked = True
+        End If
+    End If
+Next ctl
+Me.Reason.Locked = False
+Me.Active.Locked = False
+Me!frmCableConstruction.Form!FirstRun.Locked = False
+
+Me.Active.SetFocus
+
+
+End Sub
+
+
+Private Sub Form_MouseWheel(ByVal Page As Boolean, ByVal count As Long)
+Me.Reason.SetFocus
+End Sub

@@ -1,0 +1,97 @@
+﻿Option Explicit
+Option Compare Database
+
+Private Sub btnAdd_Click()
+Me.AllowAdditions = True
+'While Me.CurrentRecord < Me.Recordset.RecordCount
+'
+'    DoCmd.GoToRecord Record:=acNext
+'Wend
+Call btnEdit_Click
+End Sub
+
+
+Private Sub btnClose_Click()
+DoCmd.Close
+End Sub
+
+Private Sub btnEdit_Click()
+Dim ctl As control
+For Each ctl In Me.Controls
+    If ctl.ControlType = acTextBox Then
+        If ctl.Locked <> False Then
+            ctl.Locked = False
+        End If
+    End If
+Next ctl
+End Sub
+
+Private Sub btnConstruction_Click()
+Call OpenAClient(3, Forms!frmFindBurnListing!Base, Nz(Me.CablePasses, 2))
+End Sub
+
+Private Sub btnFilter_Click()
+Dim strFilter As String
+
+strFilter = "[Base] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [ListingCompany] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [ListingTAb] like """ & Me.ItemNoSearch & "*"""
+
+Me.Filter = strFilter
+Me.FilterOn = True
+Call Refresh_Click
+
+End Sub
+
+Private Sub btnFind_Click()
+On Error GoTo ErrorHandler:
+'DoCmd.OpenForm "frmFindBurnListing_Print", acNormal, , "Tab = '" & Me.ListingTab & "' AND Section = '" & Me.ListingSection & "' AND Construction = '" & Me.ListingConstruction & "'", acFormReadOnly
+FindBurnListing Me.ListingCompany, Me.ListingTab
+
+ErrorExit:
+Exit Sub
+
+ErrorHandler:
+MsgBox ("Missing listing information for base")
+Resume ErrorExit:
+
+
+End Sub
+
+Private Sub btnRemoveFilter_Click()
+Me.ItemNoSearch.Value = Null
+Me.ItemNoSearch.Requery
+Me.Filter = ""
+Me.FilterOn = False
+Call Refresh_Click
+End Sub
+
+Private Sub Command70_Click()
+DoCmd.OpenForm "frmNewListingUpdate"
+'Forms!frmCustomerSpecsNewRecord.
+End Sub
+
+Private Sub btnBurnListingDocument_Click()
+DoCmd.OpenForm "frmFindBurnListingDocument"
+End Sub
+
+
+Private Sub Form_Open(Cancel As Integer)
+Me.Filter = "[Base] like """ & Me.ItemNoSearch & "*"""
+Me.FilterOn = True
+Me.AllowAdditions = False
+Call Refresh_Click
+
+End Sub
+
+Private Sub ItemNoSearch_KeyDown(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Me.btnFilter.SetFocus
+        Call btnFilter_Click
+    End If
+End Sub
+
+Private Sub Refresh_Click()
+Me.Requery
+Me.Refresh
+End Sub

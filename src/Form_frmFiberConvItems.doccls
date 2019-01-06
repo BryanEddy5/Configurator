@@ -1,0 +1,9 @@
+﻿Option Explicit
+Option Compare Database
+
+Private Sub cmdClose_Click()
+
+
+DoCmd.Close acForm, "frmFiberConvItems"
+    
+End Sub

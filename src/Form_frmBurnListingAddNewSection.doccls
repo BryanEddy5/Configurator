@@ -1,0 +1,148 @@
+﻿Option Explicit
+Option Compare Database
+
+Private Sub btnAdd_Click()
+Me.AllowAdditions = True
+DoCmd.GoToRecord , , acNewRec
+Call btnEdit_Click
+End Sub
+
+
+Private Sub btnClose_Click()
+DoCmd.Close acForm, Me.Name
+End Sub
+
+Private Sub btnDelete_Click()
+
+   If MsgBox("Are you SURE you want to delete this record?" & vbCrLf & _
+    "This will permanently delete the record.", vbYesNo, "2nd Delete Confirmation") = vbYes Then
+         DoCmd.RunSQL "DELETE FROM tblBurnListingConstruction WHERE ConstructionID = " & Me.ConstructionID
+         Me.Requery
+   End If
+
+End Sub
+
+Private Sub btnEdit_Click()
+Dim ctl As control
+For Each ctl In Me.Controls
+    If ctl.ControlType = acTextBox Or ctl.ControlType = acComboBox Then
+        If ctl.Locked <> False Then
+            ctl.Locked = False
+        End If
+    End If
+Next ctl
+End Sub
+
+Private Sub btnFilter_Click()
+Dim strFilter As String
+
+strFilter = "[ListingDocument] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [ListingCompany] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [ListingSection] like """ & Me.ItemNoSearch & "*"""
+
+Me.Filter = strFilter
+Me.FilterOn = True
+Call btnRefresh_Click
+
+End Sub
+
+Private Sub btnFind_Click()
+On Error GoTo ErrorHandler:
+'DoCmd.OpenForm "frmFindBurnListing_Print", acNormal, , "Tab = '" & Me.ListingTab & "' AND Section = '" & Me.ListingSection & "' AND Construction = '" & Me.ListingConstruction & "'", acFormReadOnly
+Call FindBurnListing(Me.ListingCompany, Me.ListingDocument)
+
+ErrorExit:
+Exit Sub
+
+ErrorHandler:
+MsgBox ("Missing listing information for base")
+Resume ErrorExit:
+
+
+End Sub
+
+Private Sub btnRefresh_Click()
+Me.Requery
+Me.Refresh
+End Sub
+
+Private Sub btnRemoveFilter_Click()
+Me.ItemNoSearch.Value = Null
+Me.ItemNoSearch.Requery
+Me.Filter = ""
+Me.FilterOn = False
+'Call Refresh_Click
+End Sub
+Private Sub btnSave_Click()
+'If Me.Type Like "ft*" Then
+'    Me.Canada = -1
+'    Me.US = 0
+'Else
+'    Me.Canada = 0
+'    Me.US = -1
+'End If
+Me.AllowAdditions = False
+Dim ctl As control
+For Each ctl In Me.Controls
+    If ctl.ControlType = acTextBox Or ctl.ControlType = acComboBox Then
+        If ctl.Locked <> True Then
+            ctl.Locked = True
+        End If
+    End If
+Next ctl
+
+End Sub
+
+
+
+Private Sub cbListingCompany_AfterUpdate()
+Call FilterListingDocument
+Me.cbListingDocument = ""
+Me.cbListingDocument.Requery
+
+End Sub
+
+Private Sub cbListingDocument_AfterUpdate()
+Call FilterListingDocument
+End Sub
+
+Private Sub btnAddSafetyRating_Click()
+If Me.Dirty Then Me.Dirty = False
+DoCmd.OpenForm "frmBurnListingAddRating", acNormal, , "ConstructionID = " & Me.txConstructionID
+Forms!frmBurnListingAddRating!BurnListingConstructionID = Me.txConstructionID
+End Sub
+
+Private Sub Form_Open(Cancel As Integer)
+Me.Filter = "[ListingDocument] like """ & Me.ItemNoSearch & "*"""
+Me.FilterOn = True
+Me.AllowAdditions = False
+Call btnRefresh_Click
+
+End Sub
+
+Private Sub ItemNoSearch_KeyDown(KeyCode As Integer, Shift As Integer)
+    If KeyCode = vbKeyReturn Then
+        Me.btnFilter.SetFocus
+        Call btnFilter_Click
+    End If
+End Sub
+
+Private Sub FilterListingDocument()
+
+Dim ListingDocSource As String
+
+    ListingDocSource = "SELECT ListingDocument " & _
+                     "FROM tblBurnListingDocument " & _
+                     "WHERE ListingCompany = '" & Me.cbListingCompany.Value & "'"
+    Me.cbListingDocument.rowSource = ListingDocSource
+    
+'    ListingSecSource = "SELECT ListingSection " & _
+'                     "FROM tblBurnListingConstruction " & _
+'                     "WHERE ListingCompany = '" & Me.cbListingCompany.Value & "' AND ListingDocument = '" & Me.cbListingDocument & "'"
+'    Me.cbSection.RowSource = ListingSecSource
+'
+    
+    'Me.cbListingCompany.Requery
+
+
+End Sub

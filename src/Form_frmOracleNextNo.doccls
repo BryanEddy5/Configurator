@@ -1,0 +1,6 @@
+﻿Option Explicit
+Private Sub Form_Open(Cancel As Integer)
+Me.Visible = False
+Me.move 1000000, 1000000
+Me.Filter = ""
+End Sub

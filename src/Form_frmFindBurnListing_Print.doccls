@@ -1,0 +1,36 @@
+﻿Option Explicit
+Option Compare Database
+
+
+Private Sub btnFiberClose_Click()
+DoCmd.Close acForm, "frmFindItemSubunits"
+End Sub
+
+Private Sub btnFind_Click()
+
+End Sub
+
+Private Sub btnClose_Click()
+DoCmd.Close acForm, "frmFindBurnListing_Print"
+End Sub
+
+
+Private Sub Form_Open(Cancel As Integer)
+On Error GoTo Error:
+
+
+
+
+
+Error_Exit:
+Exit Sub
+Error:
+MsgBox ("No Burn Listing"), vbCritical
+Resume Error_Exit
+
+End Sub
+
+Private Sub Refresh_Click()
+Me.Requery
+Me.Refresh
+End Sub

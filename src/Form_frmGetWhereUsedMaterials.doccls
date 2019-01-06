@@ -1,0 +1,118 @@
+﻿
+Option Compare Database
+Option Explicit
+Dim Materials As New clsMaterials
+Dim Timer As New StopWatch
+
+Private Sub Base_KeyDown(KeyCode As Integer, Shift As Integer)
+If KeyCode = 27 Then
+DoCmd.Close acForm, Me.Name
+End If
+End Sub
+
+Private Sub btnClose_Click()
+DoCmd.Close acForm, Me.Name
+End Sub
+
+
+
+
+Private Sub btnExcelExport_Click()
+
+On Error GoTo ErrorHandler
+Dim FileName As String
+FileName = "WhereUsedMaterials" & Format(Now, "yyyyMMddhhmmss")
+
+'DoCmd.OutputTo acOutputTable, "tblGetBuyMaterials", acFormatXLS, Environ("USERPROFILE") & "\Desktop\BuyMaterials" & Format(Now, "yyyyMMddhhmmss") & ".xls", True
+
+Export2XLS "tblGetWhereUsedMaterial", FileName
+
+Beep
+'MsgBox "File has successfully been exported to Desktop"
+
+ErrorExit:
+Exit Sub
+
+ErrorHandler:
+MsgBox Err.Number & " " & Err.Description
+Resume ErrorExit
+
+End Sub
+
+Private Sub btnGetInventory_Click()
+DoCmd.OpenQuery "qryGetWhereUsedMaterialOnHnadInventory"
+End Sub
+
+Private Sub btnOpenInputs_Click()
+DoCmd.OpenForm "frmMaterialWhereUsed", acFormDS, , , acFormEdit, acWindowNormal
+
+End Sub
+
+Private Sub btnRemoveFilter_Click()
+Me.Filter = ""
+Me.FilterOn = False
+End Sub
+
+Private Sub btnRun_Click()
+
+
+DoCmd.RunSQL "DELETE FROM tblGetWhereUsedMaterial"
+
+If CurrentProject.AllForms("frmMaterialWhereUsed").IsLoaded Then
+    DoCmd.Close acForm, "frmMaterialWhereUsed", acSaveYes
+End If
+
+Timer.StartTimer
+
+Materials.LoadData (2)
+
+tb_FunctionTimer = Timer.EndTimer
+
+Me.btnExcelExport.SetFocus
+Me.Refresh
+Me.Requery
+Me.Repaint
+Beep
+
+End Sub
+
+
+
+Private Sub btnWhereUsed_Click()
+
+DoCmd.RunSQL "DELETE FROM tblGetWhereUsedMaterial"
+
+If CurrentProject.AllForms("frmMaterialWhereUsed").IsLoaded Then
+    DoCmd.Close acForm, "frmMaterialWhereUsed", acSaveYes
+End If
+
+Timer.StartTimer
+
+DoCmd.OpenQuery "qryGetWhereUsedMaterial_Level1"
+
+tb_FunctionTimer = Timer.EndTimer
+
+Me.btnExcelExport.SetFocus
+Me.Refresh
+Me.Requery
+Me.Repaint
+Beep
+
+
+
+End Sub
+
+Private Sub Form_KeyPress(KeyAscii As Integer)
+If KeyAscii = 27 Then
+DoCmd.Close acForm, Me.Name
+End If
+End Sub
+
+Private Sub Form_Load()
+
+DoCmd.SetWarnings False
+DoCmd.RunSQL "DELETE FROM tblGetWhereUsedMaterial"
+Me.Refresh
+Me.Requery
+
+End Sub

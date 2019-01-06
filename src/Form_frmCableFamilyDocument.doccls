@@ -1,0 +1,197 @@
+﻿Option Explicit
+Option Compare Database
+Private WithEvents m_frmCableFamily As Form_frmCableFamily
+
+Private Sub btnAddDocs_Click()
+
+If IsNull(Me.CableFamily) Then
+    Exit Sub
+End If
+
+
+DoCmd.OpenForm "frmCableFamilyViewDocument"
+
+ShowCableFamilyDocuments (Me.CableFamily)
+
+Forms.frmCableFamilyViewDocument.bxDocList.Selected(0) = True
+End Sub
+
+Private Sub btnAttachSpec_Click()
+   Dim fDialog As Office.FileDialog
+   Dim varFile As Variant
+   Dim FileName As String
+   Dim FileType As String
+   Dim FilePath As String
+ 
+ On Error GoTo ErrorHandler:
+   ' Clear listbox contents.
+   Me.FileList.rowSource = ""
+ 
+   ' Set up the File Dialog.
+   Set fDialog = Application.FileDialog(msoFileDialogFilePicker)
+ 
+   With fDialog
+ 
+      ' Allow user to make multiple selections in dialog box
+      .AllowMultiSelect = True
+             
+      ' Set the title of the dialog box.
+      .Title = "Please select one or more files"
+ 
+      ' Clear out the current filters, and add our own.
+      .Filters.Clear
+      .Filters.Add "All Files", "*.*"
+      .Filters.Add "Access Databases", "*.MDB"
+      .Filters.Add "Access Projects", "*.ADP"
+      
+ 
+      ' Show the dialog box. If the .Show method returns True, the
+      ' user picked at least one file. If the .Show method returns
+      ' False, the user clicked Cancel.
+      If .Show = True Then
+ 
+         'Loop through each file selected and add it to our list box.
+         
+         For Each varFile In .SelectedItems
+            Me.FileList.AddItem varFile
+         Next
+        
+        DoCmd.SetWarnings False
+        'Create document name from document path
+        FilePath = FileList.ItemData(0)
+        FileType = Mid(FilePath, InStrRev(FilePath, "."), Len(FilePath) - (InStrRev(FilePath, ".") - 1))
+        FileName = InStrRev(FilePath, "\")
+        Me.CableDocument = Mid(FilePath, FileName + 1, Len(FilePath) - FileName - Len(FileType))
+        Me.FileType = FileType
+        
+        
+            
+        DoCmd.SetWarnings True
+      Else
+         'MsgBox "You clicked Cancel in the file dialog box."
+      End If
+   End With
+Exit Sub
+   
+ErrorHandler:
+MsgBox "Command has produced an error: " & Err.Number & " " & Err.Description
+   
+   
+End Sub
+
+Private Sub btnClose_Click()
+DoCmd.Close
+End Sub
+
+
+Private Sub btnSubmit_Click()
+
+    Dim strDocument As String
+    Dim intFamilyID As Integer
+    Dim strFilePath As String
+    Dim NewPath As String
+    Dim SaveDocSuccess As Boolean
+    Dim strDocumentName As String
+    Dim FamilyID%, i%
+    Dim doc$, newDoc$, Path$, Source$, Destination$
+    On Error GoTo ErrorHandler:
+    
+    If MsgBox("Are you ready to submit?", vbYesNo) = vbNo Then
+        Exit Sub
+    End If
+    
+    If IsNull(Me.FileList.ItemData(0)) = True Then
+        If MsgBox("Do you want to attach a Spec Sheet?", vbYesNo) = vbYes Then
+            Call btnAttachSpec_Click
+            Exit Sub
+        End If
+    End If
+    
+    FamilyID = Me.CableFamily
+'    strDocument = Me.CableDocument
+'    strFilePath = Me.FileList.ItemData(0)
+    Path = "\\naa.fujikurausa.com\dfs\SPB\Teams\Cable_Tech\NPRConstructions\"
+'    strDocumentName = intFamilyID & "." & strDocument
+'
+    For i = 0 To Me.FileList.ListCount - 1
+        
+        'Modify the document to have the cablefamilyid as a prefix
+        Source = Me.FileList.ItemData(i)
+        doc = GetFileName(Source)
+        Destination = Path & FamilyID & "." & doc
+        Debug.Print "Source: " & Source & vbCrLf & "Destination: " & Destination
+        
+        If FileExists(Destination) Then
+            If MsgBox("File: " & doc & " already exists.  Do you want to overwrite it?", vbYesNo) = vbYes Then
+                 FileCopy Source, Destination
+            End If
+        Else
+             FileCopy Source, Destination
+             Call SaveDocumentTable(FamilyID, doc)
+        End If
+    
+    Next
+    SaveDocSuccess = True
+    
+
+    If SaveDocSuccess = True Then
+        
+        Beep
+        MsgBox ("Load is Complete")
+    Else
+        MsgBox "Error occurred while saving document. Ensure document is not open.", vbCritical
+    End If
+
+    
+    
+    
+ErrorExit:
+    Exit Sub
+    
+ErrorHandler:
+    MsgBox Err.Description & " " & Err.Number
+    Resume ErrorExit
+
+
+End Sub
+
+Private Sub cmdDelete_Click()
+On Error GoTo Err_cmdDelete_Click
+
+
+    DoCmd.DoMenuItem acFormBar, acEditMenu, 8, , acMenuVer70
+    DoCmd.DoMenuItem acFormBar, acEditMenu, 6, , acMenuVer70
+
+Exit_cmdDelete_Click:
+    Exit Sub
+
+Err_cmdDelete_Click:
+    MsgBox Err.Description
+    Resume Exit_cmdDelete_Click
+End Sub
+
+
+Private Sub Form_Load()
+Me.FileList.rowSource = ""
+
+Set m_frmCableFamily = Form_frmCableFamily
+
+End Sub
+
+
+Function SaveDocumentTable(intFamilyID As Integer, strDocument As String)
+
+Dim strSQL As String
+
+strSQL = "INSERT INTO tblCableFamilyDocs (FamilyID, Document) VALUES  ('" & intFamilyID & "'  , '" & strDocument & "') "
+
+DoCmd.RunSQL strSQL
+
+End Function
+
+
+Private Sub m_frmCableFamily_Selected(Value As String)
+
+Me.CableFamily = Value
+
+End Sub

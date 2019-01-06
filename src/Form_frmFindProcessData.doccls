@@ -1,0 +1,77 @@
+﻿Option Compare Database
+Option Explicit
+'Key Preview = Yes
+
+
+Private Sub btnFiberClose_Click()
+DoCmd.Close acForm, Me.Name
+
+End Sub
+
+Private Sub btnFind_Click()
+Call OpenAClient(0, Me.[Item #], Nz(Me.Location, 2))
+End Sub
+
+Private Sub btnRemoveFilter_Click()
+Me.ItemNoSearch.Value = Null
+Me.ItemNoSearch.Requery
+Me.Filter = ""
+Me.OrderBy = ""
+Me.FilterOn = False
+Me.OrderByOn = False
+
+'Call Refresh_Click
+
+
+End Sub
+
+
+
+
+Private Sub btnSearch_Click()
+Dim strFilter As String
+strFilter = "[Item #] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [Reel No] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [Entry Date] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [NCMIR #] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [Cut No] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [ID] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [Buffer Line] like """ & Me.ItemNoSearch & "*"""
+strFilter = strFilter & " OR [NCMIR #] like """ & Me.ItemNoSearch & "*"""
+
+Me.Filter = strFilter
+Me.FilterOn = True
+'Call Refresh_Click
+End Sub
+
+
+
+Private Sub btnSortDescending_Click()
+
+Me.OrderBy = "[Entry Date] DESC"
+Me.OrderByOn = True
+
+'Call Refresh_Click
+
+End Sub
+
+Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
+    If Shift = 2 And KeyCode = vbKeyW Then
+        Call btnFiberClose_Click
+    End If
+End Sub
+
+
+Private Sub ItemNoSearch_KeyDown(KeyCode As Integer, Shift As Integer)
+If KeyCode = vbKeyReturn Then
+        Me.btnSearch.SetFocus
+        Call btnSearch_Click
+    End If
+
+End Sub
+
+
+Private Sub Refresh_Click()
+Me.Requery
+'Me.Refresh
+End Sub

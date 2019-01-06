@@ -1,0 +1,285 @@
+﻿
+Option Explicit
+Option Compare Database
+Private WithEvents m_frm As Form_frmCutSheetImageGroups
+Private WithEvents m_frmCableFamily As Form_frmCableFamily
+
+
+Private Sub btnEmail_Click()
+
+'    Dim oApp As New Outlook.Application
+'    Dim oEmail As Outlook.MailItem
+'    Dim fileName As String, todayDate As String
+'    Dim StdOp As String
+'    Dim rst As New ADODB.Recordset
+'    Dim cnn As ADODB.Connection
+'
+'    Set cnn = CurrentProject.conneciton
+'
+'
+'
+'    StdOp = Me.frmCableConstruction.Form.StandardOperation
+'
+'    'Export report in same folder as db with date stamp
+'    todayDate = Format(Date, "MMDDYYYY")
+'    fileName = StdOp & "_" & todayDate & ".pdf"
+'    DoCmd.OpenReport "rptConstructionSinglePass", acViewPreview, , "Base ='" & Me.Base & "'", acWindowNormal
+'    DoCmd.OutputTo acReport, "rptConstructionSinglePass", acFormatPDF, fileName, False
+'    DoCmd.Close acReport, "rptConstructionSinglePass"
+'
+'    'Email the results of the report generated
+'    Set oEmail = oApp.CreateItem(olMailItem)
+'    With oEmail
+'        .Recipients.Add "bryan.eddy@aflglobal.com"
+'        .Subject = StdOp
+'        .Body = "Please see attached construction and create new setup for " & StdOp & vbCrLf & vbCrLf & _
+'                "This is an automated email"
+'        .Attachments.Add fileName
+'        .Send
+'    End With
+'
+'    MsgBox "Email successfully sent!", vbInformation, "EMAIL STATUS"
+
+
+End Sub
+
+
+Private Sub btnBurnListing_Click()
+DoCmd.OpenForm "frmFindItemBurnListing", acNormal, , "base = '" & Me.Base & "'", , acWindowNormal
+End Sub
+
+Private Sub btnCableFamilyDoc_Click()
+If IsNull(Me.FamilyID) = True Then
+    MsgBox "No NPR documents found", vbCritical
+    Exit Sub
+End If
+
+
+DoCmd.OpenForm "frmCableFamilyViewDocument"
+
+ShowCableFamilyDocuments (Me.FamilyID)
+
+Forms.frmCableFamilyViewDocument.bxDocList.Selected(0) = True
+End Sub
+
+Private Sub btnClose_Click()
+On Error GoTo ErrorHandler
+CloseClient (Me.hWnd)
+
+ErrorExit:
+Exit Sub
+
+ErrorHandler:
+DoCmd.Close acForm, Me.Name
+Resume ErrorExit
+End Sub
+
+
+Public Sub btnEdit_Click()
+
+UpdateItem (False)
+End Sub
+
+Public Sub UpdateItem(UpdateButton As Boolean)
+Dim ctl As control
+
+Call UserCheck
+
+If sUser = 1 Or BaseID_DateCreated(Me.BaseID) = True Or UpdateButton = True Then
+    For Each ctl In Me.Controls
+        If ctl.ControlType = acTextBox Or ctl.ControlType = acComboBox Then
+            If ctl.Locked <> False Then
+                ctl.Locked = False
+            End If
+        End If
+    Next ctl
+    For Each ctl In Me!frmCableConstruction.Form.Controls
+            If ctl.ControlType = acTextBox Or ctl.ControlType = acComboBox Then
+            If ctl.Locked <> False Then
+                ctl.Locked = False
+            End If
+        End If
+    Next ctl
+        For Each ctl In Me!frmCableConstructionPrefixID.Form.Controls
+            If ctl.ControlType = acTextBox Or ctl.ControlType = acComboBox Then
+            If ctl.Locked <> False Then
+                ctl.Locked = False
+            End If
+        End If
+    Next ctl
+        For Each ctl In Me!frmConstructionProductID.Form.Controls
+            If ctl.ControlType = acTextBox Or ctl.ControlType = acComboBox Then
+            If ctl.Locked <> False Then
+                ctl.Locked = False
+            End If
+        End If
+    Next ctl
+End If
+'Me.Revision_History.Locked = True
+'Me.Revision_Date.Locked = True
+'Me.BaseID.Locked = True
+
+
+
+End Sub
+
+Private Sub btnMils_Click()
+On Error GoTo Error_Handler
+
+DoCmd.OpenForm "frmMilsConversion"
+
+Forms!frmMilsConversion!NominalWall = Round(CDbl(Me!frmCableConstruction.Form!NominalWall.NominalWall) * 39.37, 1)
+Forms!frmMilsConversion!MinAveWall = Round(CDbl(Me!frmCableConstruction.Form!NominalWall.MinAveWall) * 39.37, 1)
+Forms!frmMilsConversion!MinSpotWall = Round(CDbl(Me!frmCableConstruction.Form!NominalWall.MinSpotWall) * 39.37, 1)
+Forms!frmMilsConversion!MaxAveWall = Round(CDbl(Me!frmCableConstruction.Form!NominalWall.MaxAveWall) * 39.37, 1)
+
+Error_Exit:
+Exit Sub
+
+Error_Handler:
+'MsgBox Err.Description & " " & Err.Number
+Resume Error_Exit
+End Sub
+
+
+
+Private Sub btnOpenImages_Click()
+Dim filterForm$
+
+
+Set m_frm = New Form_frmCutSheetImageGroups
+
+
+
+If IsNull(Me.txImageGroupID) Or Me.txImageGroupID = Empty Then
+    filterForm = ""
+Else
+    filterForm = "ImageGroupID = " & Me.txImageGroupID
+End If
+
+m_frm.Filter = filterForm
+m_frm.FilterOn = True
+
+m_frm.Visible = True
+
+'DoCmd.OpenForm "frmCutSheetImageGroups", , , filterForm
+End Sub
+
+
+Private Sub btnPDF_Click()
+
+DoCmd.OpenReport "rptConstructionSinglePass", acViewPreview, , "base ='" & Me.Base & "'", acWindowNormal
+DoCmd.RunCommand acCmdPreviewTwoPages
+
+'DoCmd.OutputTo acOutputReport, "rptConstructionSinglePass", acFormatPDF, Environ("USERPROFILE") & "\Desktop\" & Me.Oracle & "_" & Format(Now, "yyyyMMddhhmmss") & ".pdf"
+
+
+
+End Sub
+
+Private Sub btnRemoveFilter_Click()
+Me.Requery
+End Sub
+
+Private Sub btnStandards_Click()
+DoCmd.OpenForm "frmFindCableStandards", acNormal, , "BaseID = " & Me.BaseID, , acWindowNormal
+Forms.frmFindCableStandards.BaseID = Me.BaseID
+End Sub
+
+Private Sub btnTensile_Click()
+Dim iTensileStrength As Integer
+
+On Error GoTo ErrorHandler:
+
+
+
+iTensileStrength = BaseTensileStrengthCalculator(Me.Base)
+MsgBox Me.Oracle & " max tensile loading is " & iTensileStrength & " Newtons / " & Round(iTensileStrength * 0.2248, 0) & " lbs-f " & vbCrLf & vbCrLf _
+        & "Disclaimer: This is the theoretical maximum calculated load.  Not real-world applicable."
+
+ErrorExit:
+Exit Sub
+
+ErrorHandler:
+If Err.Number = 94 Then
+    MsgBox "No strength members found in cable construction.", vbCritical
+Else
+    MsgBox Err.Number & " " & Err.Description
+End If
+
+Resume ErrorExit
+End Sub
+
+Private Sub btnUpdate_Click()
+DoCmd.OpenForm "frmRevisionReason"
+Forms!frmRevisionReason!strHwnd = Me.Caption 'CStr(Me.Hwnd)
+Forms!frmRevisionReason!txFormType = 1
+
+'Me.Revision_Date = Date
+'Me.Revision_Letter = Int(Me.Revision_Letter) + Int(1)
+
+
+End Sub
+
+
+Private Sub btnWeight_Click()
+Dim Weight As Double
+
+Weight = Base_BOM_WeightCalculator(Me.Oracle)
+
+If Weight = 0 Then
+    Exit Sub
+End If
+
+MsgBox Me.Oracle & " weighs " & Weight & " kg/km"
+
+End Sub
+
+Private Sub Form_KeyDown(KeyCode As Integer, Shift As Integer)
+    If Shift = 2 And KeyCode = vbKeyW Then
+        CloseClient (Me.hWnd)
+    End If
+    
+
+
+End Sub
+
+Private Sub Form_Load()
+
+
+Dim ctl As control
+For Each ctl In Me.Controls
+    If ctl.ControlType = acTextBox Or ctl.ControlType = acComboBox Then
+        If ctl.Locked <> True Then
+            ctl.Locked = True
+        End If
+    End If
+Next ctl
+Me.Reason.Locked = False
+Me.Active.Locked = False
+End Sub
+
+Private Sub m_frm_Selected(ImageGroupID As Integer)
+Me.txImageGroupID = ImageGroupID
+End Sub
+
+Private Sub txFamilyID_DblClick(Cancel As Integer)
+Dim filterForm$
+
+
+Set m_frmCableFamily = New Form_frmCableFamily
+
+
+
+If IsNull(Me.FamilyID) Or Me.FamilyID = Empty Then
+    filterForm = ""
+Else
+    filterForm = "FamilyID = " & Me.FamilyID
+End If
+
+m_frmCableFamily.Filter = filterForm
+m_frmCableFamily.FilterOn = True
+
+m_frmCableFamily.Visible = True
+
+End Sub
