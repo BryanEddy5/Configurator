@@ -161,7 +161,7 @@ End Select
 
 'Evaluates if this is a special print or AFL Standard
 'If statement identifying special print
-If Mid(Forms!frmMainMenu!ItemNo, 9, 1) = 2 Or Mid(Forms!frmMainMenu!ItemNo, 9, 1) = "S" Or Me.ItemNo Like "l*" Then
+If Mid(Forms!frmMainMenu!ItemNo, 9, 1) = 2 Or Mid(Forms!frmMainMenu!ItemNo, 9, 1) = "S" Then
     
     Call lockPrintFields(False)
     

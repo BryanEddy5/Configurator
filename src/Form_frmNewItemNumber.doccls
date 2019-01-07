@@ -93,7 +93,7 @@ End Sub
 
 Private Sub ItemType()
 
-Dim sNewItemType As String
+Dim NewItemType As String
 
 Select Case True
 
@@ -101,37 +101,37 @@ Select Case True
 
 
 
-    sNewItemType = "Premise TB"
+    NewItemType = "Premise TB"
 
 Case Me.NewItemNumber Like "rbn*osp"
 
-    sNewItemType = "Ribbon OSP"
+    NewItemType = "Ribbon OSP"
 
 Case Me.NewItemNumber Like "RBN*"
-    sNewItemType = "Premise Ribbon"
+    NewItemType = "Premise Ribbon"
 
 
 Case Me.NewItemNumber Like "PE*"
 
     If Me.CatalogNumber Like "EM004?09???Q*" Then
-        sNewItemType = "A-BT"
+        NewItemType = "A-BT"
     Else
-        sNewItemType = "Premise Sub"
+        NewItemType = "Premise Sub"
     End If
     
 Case Me.NewItemNumber Like "DNT*" ' Or Me.NewItemNumber Like "WTC*"
-    sNewItemType = "WTC FG"
+    NewItemType = "WTC FG"
 
 Case Me.NewItemNumber Like "WTC*" ' Or Me.NewItemNumber Like "WTC*"
-    sNewItemType = "WTC SUB"
+    NewItemType = "WTC SUB"
     
 Case Else
-    sNewItemType = "Premise FG"
+    NewItemType = "Premise FG"
 
 End Select
 
-Me.NewItemType = sNewItemType
-Forms!frmMainMenu!NewItemType = sNewItemType
+Me.NewItemType = NewItemType
+Forms!frmMainMenu!NewItemType = NewItemType
 
 Me.cboItemNumberCopy = Null
 Me.cboItemNumberCopy.Requery
