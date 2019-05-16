@@ -1,0 +1,8 @@
+2
+tblColor_ChipstblColor_Chip_Concentration
+tblColor_Chips
+tblColor_Chip_Concentration
+Field = Begin
+ColorChip
+ColorChip
+End

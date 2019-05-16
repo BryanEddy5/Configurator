@@ -1,0 +1,8 @@
+2
+tblColor_Jacket_CatalogtblJacketMaterials
+tblColor_Jacket_Catalog
+tblJacketMaterials
+Field = Begin
+Color_Chip_Catalog
+Color_Chip_Catalog
+End

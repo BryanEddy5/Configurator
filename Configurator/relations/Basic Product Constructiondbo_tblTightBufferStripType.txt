@@ -1,0 +1,8 @@
+2
+Basic Product Constructiondbo_tblTightBufferStripType
+Basic Product Construction
+dbo_tblTightBufferStripType
+Field = Begin
+EZ Strip
+TightBufferStrip
+End

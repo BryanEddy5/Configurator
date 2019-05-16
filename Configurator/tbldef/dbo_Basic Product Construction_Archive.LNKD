@@ -1,0 +1,4 @@
+﻿dbo_Basic Product Construction_Archive
+ODBC;DRIVER=SQL Server;SERVER=NAASPB-PRD04\SQL2014;Trusted_Connection=Yes;APP=Microsoft Office 2013;DATABASE=Premise
+dbo.Basic Product Construction_Archive
+ID

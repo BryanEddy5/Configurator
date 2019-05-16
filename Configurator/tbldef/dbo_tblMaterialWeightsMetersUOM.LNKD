@@ -1,0 +1,4 @@
+﻿dbo_tblMaterialWeightsMetersUOM
+ODBC;DRIVER=SQL Server;SERVER=NAASPB-PRD04\SQL2014;Trusted_Connection=Yes;APP=Microsoft Office 2003;DATABASE=Premise;Network=DBMSSOCN
+dbo.tblMaterialWeightsMetersUOM
+Material

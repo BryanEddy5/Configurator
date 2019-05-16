@@ -1,0 +1,8 @@
+2
+Basic Product ConstructiontblCableConstructionReferences
+Basic Product Construction
+tblCableConstructionReferences
+Field = Begin
+Base
+Base
+End

@@ -1,0 +1,4 @@
+CREATE TABLE [tblKQ_TBType] (
+  [FiberCount] VARCHAR (255) CONSTRAINT [PrimaryKey] PRIMARY KEY  UNIQUE  NOT NULL ,
+  [TBMaterial] VARCHAR (255)
+)

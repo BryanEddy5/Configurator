@@ -1,0 +1,4 @@
+﻿Setup_MachineNames
+ODBC;Description=SCH01_PT;DRIVER=SQL Server Native Client 11.0;SERVER=NAACAB-SCH01;Trusted_Connection=Yes;APP=Microsoft Office 2013;DATABASE=PlanetTogether_Data;
+Setup.MachineNames
+MachineID

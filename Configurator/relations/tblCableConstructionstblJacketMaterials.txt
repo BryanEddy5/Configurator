@@ -1,0 +1,8 @@
+2
+tblCableConstructionstblJacketMaterials
+tblCableConstructions
+tblJacketMaterials
+Field = Begin
+JacketMaterial
+JacketMaterial
+End

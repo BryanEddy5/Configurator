@@ -1,0 +1,4 @@
+﻿tblBOMOpResourcesInterface
+;DATABASE=C:\Applications\CDITables.mdb
+tblBOMOpResourcesInterface
+OrganizationCode;+AssemblyItemNumber;+OperationSeqNumber;+ResourceSeqNumber;+CopyCount;+OrgOpSeq

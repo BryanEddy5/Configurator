@@ -1,0 +1,8 @@
+2
+dbo_tblTightBufferStripTypedbo_tblTightBufferSetup
+dbo_tblTightBufferStripType
+dbo_tblTightBufferSetup
+Field = Begin
+TightBufferStrip
+TightBufferStrip
+End

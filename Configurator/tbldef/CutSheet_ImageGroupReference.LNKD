@@ -1,0 +1,4 @@
+﻿CutSheet_ImageGroupReference
+ODBC;DRIVER=SQL Server;SERVER=NAASPB-PRD04\SQL2014;Trusted_Connection=Yes;APP=Microsoft Office 2013;DATABASE=Premise
+CutSheet.ImageGroupReference
+ImageGroupID;+ImageTypeID;+Color;+Armored

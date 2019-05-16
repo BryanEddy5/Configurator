@@ -1,0 +1,4 @@
+﻿tblColor_Jacket_Catalog
+ODBC;DRIVER=SQL Server;SERVER=NAASPB-PRD04\SQL2014;Trusted_Connection=Yes;APP=Microsoft Office 2003;DATABASE=Premise;Network=DBMSSOCN
+dbo.tblColor_Jacket_Catalog
+Color_Chip_Catalog

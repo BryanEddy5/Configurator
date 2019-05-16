@@ -1,0 +1,8 @@
+2
+tblCableConstructionReferencetblCableConstructions
+tblCableConstructionReferences
+tblCableConstructions
+Field = Begin
+BaseID
+BaseID
+End

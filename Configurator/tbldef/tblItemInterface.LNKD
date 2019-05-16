@@ -1,0 +1,4 @@
+﻿tblItemInterface
+;DATABASE=C:\Applications\CDITables.mdb
+tblItemInterface
+OrganizationCode;+ItemNumber

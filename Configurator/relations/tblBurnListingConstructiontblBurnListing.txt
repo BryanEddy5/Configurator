@@ -1,0 +1,20 @@
+2
+tblBurnListingConstructiontblBurnListing
+tblBurnListingConstruction
+tblBurnListing
+Field = Begin
+ListingCompany
+ListingCompany
+End
+Field = Begin
+ListingDocument
+ListingTab
+End
+Field = Begin
+ListingSection
+ListingSection
+End
+Field = Begin
+ListingConstruction
+ListingConstruction
+End

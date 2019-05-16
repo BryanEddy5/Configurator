@@ -1,9 +1,0 @@
-﻿Option Explicit
-Option Compare Database
-
-Private Sub Form_Open(Cancel As Integer)
-Me.Visible = False
-Me.move 1000000, 1000000
-
-
-End Sub

@@ -1,0 +1,4 @@
+﻿dbo_Printed Labels (Data Products)
+ODBC;DRIVER=SQL Server;SERVER=NAASPB-PRD04\SQL2014;Trusted_Connection=Yes;APP=Microsoft Office 2013;DATABASE=Premise
+dbo.Printed Labels (Data Products)
+Reel No;+Order Qty;+Buff Line #

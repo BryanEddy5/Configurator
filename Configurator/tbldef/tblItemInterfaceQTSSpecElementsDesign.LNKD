@@ -1,0 +1,4 @@
+﻿tblItemInterfaceQTSSpecElementsDesign
+;DATABASE=C:\Applications\CDITables.mdb
+tblItemInterfaceQTSSpecElementsDesign
+ElementID;+DesignTypeGroup;+DesignType;+DesignSubType;+OrgName

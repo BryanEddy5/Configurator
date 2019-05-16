@@ -1,0 +1,4 @@
+﻿dbo_tblSalesForce_Pricing
+ODBC;DRIVER=SQL Server;SERVER=NAASPB-PRD04\SQL2014;Trusted_Connection=Yes;APP=Microsoft Office 2013;DATABASE=Premise
+dbo.tblSalesForce_Pricing
+Product_Category
